@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { Phone, Mail, MapPin, Star, Calendar, TrendingUp, Package, Clock, ChevronLeft, ChevronRight, Edit } from 'lucide-react-native';
+import { Phone, Mail, MapPin, Star, Calendar, TrendingUp, Package, Clock, ChevronLeft, ChevronRight, CreditCard as Edit } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import Header from '@/components/Header';
 
@@ -105,6 +105,7 @@ export default function ProfileScreen() {
 
   // Filter orders by selected date
   const ordersForDate = mockOrders.filter(order => order.date === selectedDate.toDateString());
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
