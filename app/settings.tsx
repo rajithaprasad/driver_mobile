@@ -30,7 +30,7 @@ export default function SettingsScreen() {
   };
 
   const handleChangePassword = () => {
-    Alert.alert('Change Password', 'Password change functionality would be implemented here');
+    router.push('/change-password');
   };
 
   return (

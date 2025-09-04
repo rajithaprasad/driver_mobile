@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { MapPin, Clock, DollarSign, Package, Star, Navigation, ChevronLeft, ChevronRight, Search, Calendar, CircleCheck as CheckCircle } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import Header from '@/components/Header';
@@ -96,6 +97,7 @@ export default function HomeScreen() {
   const [currentDateIndex, setCurrentDateIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'find' | 'schedule' | 'completed'>('find');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const generateDates = () => {
     const dates = [];
@@ -138,6 +140,23 @@ export default function HomeScreen() {
     
     setCurrentDateIndex(newIndex);
     setSelectedDate(dates[newIndex]);
+  };
+
+  const handleDatePickerChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(Platform.OS === 'ios');
+    if (selectedDate) {
+      const newIndex = dates.findIndex(date => 
+        date.toDateString() === selectedDate.toDateString()
+      );
+      if (newIndex !== -1) {
+        setCurrentDateIndex(newIndex);
+        setSelectedDate(selectedDate);
+      }
+    }
+  };
+
+  const openCalendar = () => {
+    setShowDatePicker(true);
   };
 
   const handleDatePickerChange = (event: any, selectedDate?: Date) => {
@@ -253,7 +272,7 @@ export default function HomeScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Date Scroller */}
-        <View style={styles.dateSection}>
+        <View style={[styles.dateSection, { marginTop: 20 }]}>
           <View style={[styles.dateScrollerContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.dateNavigationContainer}>
               <TouchableOpacity 
@@ -279,6 +298,13 @@ export default function HomeScreen() {
                 disabled={currentDateIndex === dates.length - 1}
               >
                 <ChevronRight size={20} color={currentDateIndex === dates.length - 1 ? colors.border : colors.primary} />
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.calendarButton, { backgroundColor: colors.primary }]} 
+                onPress={openCalendar}
+              >
+                <Calendar size={20} color="#ffffff" />
               </TouchableOpacity>
               
               <TouchableOpacity 
@@ -323,10 +349,6 @@ export default function HomeScreen() {
 
         {/* Jobs List */}
         <View style={styles.jobsContainer}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            {filteredJobs.length} Jobs for {formatDate(selectedDate).month} {formatDate(selectedDate).date}
-          </Text>
-          
           {filteredJobs.length === 0 ? (
             <View style={[styles.emptyJobs, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <Package size={40} color={colors.border} />
@@ -420,6 +442,18 @@ export default function HomeScreen() {
           maximumDate={dates[dates.length - 1]}
         />
       )}
+
+      {/* Date Picker Modal */}
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={handleDatePickerChange}
+          minimumDate={dates[0]}
+          maximumDate={dates[dates.length - 1]}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -497,6 +531,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     marginTop: 2,
+  },
+  calendarButton: {
+    padding: 8,
+    borderRadius: 8,
+    marginLeft: 12,
   },
   calendarButton: {
     padding: 8,

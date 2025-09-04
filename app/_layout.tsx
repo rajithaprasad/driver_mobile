@@ -22,6 +22,7 @@ export default function RootLayout() {
           <Stack.Screen name="privacy" />
           <Stack.Screen name="help" />
           <Stack.Screen name="signature" />
+          <Stack.Screen name="change-password" />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

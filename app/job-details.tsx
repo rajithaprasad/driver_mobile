@@ -130,10 +130,6 @@ export default function JobDetailsScreen() {
                 </View>
                 <View style={styles.customerDetails}>
                   <Text style={[styles.customerName, { color: colors.text }]}>{jobData.customer}</Text>
-                  <TouchableOpacity onPress={handleCallCustomer} style={styles.phoneContainer}>
-                    <Phone size={14} color={colors.success} />
-                    <Text style={[styles.phoneNumber, { color: colors.success }]}>{jobData.customerPhone}</Text>
-                  </TouchableOpacity>
                   <View style={styles.ratingContainer}>
                     <Star size={12} color={colors.accent} fill={colors.accent} />
                     <Text style={[styles.ratingText, { color: colors.accent }]}>{jobData.customerRating}</Text>
