@@ -12,7 +12,6 @@ import {
 import { router } from 'expo-router';
 import { ArrowLeft, Bell, MapPin, Volume2, Smartphone, Globe, Database } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
-import Header from '@/components/Header';
 
 export default function SettingsScreen() {
   const { colors } = useTheme();
@@ -27,7 +26,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity style={[styles.backButton, { backgroundColor: colors.surface }]} onPress={() => router.back()}>
           <ArrowLeft size={24} color={colors.primary} />
         </TouchableOpacity>
@@ -179,7 +178,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
   },
   backButton: {
     padding: 10,
@@ -258,63 +256,6 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '700',
-  },
-  successContainer: {
-    alignItems: 'center',
-  },
-  successIcon: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  successTitle: {
-    fontSize: 24,
-    fontWeight: '800',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  successMessage: {
-    fontSize: 16,
-    fontWeight: '500',
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 32,
-  },
-  backButton: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    width: '100%',
-  },
-  backButtonGradient: {
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  backButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  footer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-    marginTop: 20,
-  },
-  footerText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  footerLink: {
-    fontSize: 14,
     fontWeight: '700',
   },
 });

@@ -14,10 +14,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { User, Lock, Truck } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useTheme } from '@/contexts/ThemeContext';
 
 export default function LoginScreen() {
-  const { colors } = useTheme();
   const { colors } = useTheme();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -48,9 +46,6 @@ export default function LoginScreen() {
     setPassword('demo123');
   };
 
-  const handleForgotPassword = () => {
-    router.push('/forgot-password');
-  };
   const handleForgotPassword = () => {
     router.push('/forgot-password');
   };
@@ -130,11 +125,6 @@ export default function LoginScreen() {
                 <Text style={[styles.linkText, { color: colors.primary }]}>Forgot Password?</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.linkContainer}>
-              <TouchableOpacity onPress={handleForgotPassword}>
-                <Text style={[styles.linkText, { color: colors.primary }]}>Forgot Password?</Text>
-              </TouchableOpacity>
-            </View>
             <TouchableOpacity 
               style={styles.demoButton} 
               onPress={fillDemoCredentials}
@@ -156,6 +146,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
   },
   keyboardContainer: {
     flex: 1,
@@ -185,14 +176,11 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: '800',
   },
-  logoText: {
-    color: '#fff',
-    fontSize: 36,
-    fontWeight: '800',
-  },
   title: {
+    fontSize: 28,
     fontWeight: '800',
-    fontWeight: '800',
+    marginBottom: 8,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
@@ -202,19 +190,30 @@ const styles = StyleSheet.create({
     marginBottom: 48,
   },
   inputContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
     height: 56,
+    borderWidth: 1,
   },
   inputIcon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
+    fontSize: 16,
     fontWeight: '600',
-    fontWeight: '600',
+  },
+  loginButton: {
+    marginTop: 24,
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
     marginTop: 24,
     borderRadius: 16,
     overflow: 'hidden',
@@ -227,7 +226,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loginButtonText: {
-    fontWeight: '700',
+    fontSize: 16,
     fontWeight: '700',
   },
   linkContainer: {
@@ -238,30 +237,26 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 14,
     fontWeight: '600',
-  linkContainer: {
-    alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 8,
   },
-  linkText: {
-    fontWeight: '600',
-    fontWeight: '600',
+  demoButton: {
+    alignItems: 'center',
+    paddingVertical: 12,
   demoButton: {
     alignItems: 'center',
     paddingVertical: 12,
   },
   demoButtonText: {
+    fontSize: 14,
     fontWeight: '500',
-    fontWeight: '500',
-    alignItems: 'center',
   },
+  footer: {
+  footerText: {
     fontSize: 12,
-    fontWeight: '500',
     fontWeight: '500',
     marginBottom: 4,
   },
+  footerSubtext: {
     fontSize: 10,
-    fontWeight: '500',
     fontWeight: '500',
   },
 });
