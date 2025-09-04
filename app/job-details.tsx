@@ -14,22 +14,11 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, MapPin, Clock, User, Phone, Star, Navigation, Package } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  useAnimatedGestureHandler, 
-  runOnJS,
-  withSpring 
-} from 'react-native-reanimated';
-import { PanGestureHandler } from 'react-native-gesture-handler';
 import { useTheme } from '@/contexts/ThemeContext';
-
-const { width } = Dimensions.get('window');
 
 export default function JobDetailsScreen() {
   const { colors } = useTheme();
   const params = useLocalSearchParams();
-  const [isAccepted, setIsAccepted] = useState(false);
   
   const jobData = {
     id: params.id as string,
@@ -44,47 +33,23 @@ export default function JobDetailsScreen() {
     goods: params.goods as string,
     customerRating: parseFloat(params.customerRating as string),
     notes: params.notes as string,
+    status: params.status as string,
   };
 
-  // Slide to accept animation
-  const translateX = useSharedValue(0);
-  const SLIDE_THRESHOLD = width * 0.6;
-
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: () => {},
-    onActive: (event) => {
-      if (event.translationX > 0 && event.translationX < SLIDE_THRESHOLD) {
-        translateX.value = event.translationX;
-      }
-    },
-    onEnd: (event) => {
-      if (event.translationX > SLIDE_THRESHOLD * 0.7) {
-        translateX.value = withSpring(SLIDE_THRESHOLD);
-        runOnJS(handleAcceptJob)();
-      } else {
-        translateX.value = withSpring(0);
-      }
-    },
-  });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
-
-  const backgroundAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: translateX.value / SLIDE_THRESHOLD,
-  }));
-
   const handleAcceptJob = () => {
-    setIsAccepted(true);
     Alert.alert(
-      'Job Accepted!',
-      'The job has been added to your schedule.',
+      'Accept Job',
+      'Are you sure you want to accept this delivery job?',
       [
+        { text: 'Cancel', style: 'cancel' },
         { 
-          text: 'OK', 
+          text: 'Accept', 
           onPress: () => {
-            router.back();
+            Alert.alert(
+              'Job Accepted!',
+              'The job has been added to your schedule.',
+              [{ text: 'OK', onPress: () => router.back() }]
+            );
           }
         }
       ]
@@ -242,23 +207,19 @@ export default function JobDetailsScreen() {
         </View>
       </ScrollView>
 
-      {/* Slide to Accept */}
-      {!isAccepted && (
-        <View style={[styles.slideContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Animated.View style={[styles.slideBackground, backgroundAnimatedStyle, { backgroundColor: colors.success }]} />
-          <PanGestureHandler onGestureEvent={gestureHandler}>
-            <Animated.View style={[styles.slideButton, animatedStyle]}>
-              <LinearGradient
-                colors={['#f59e0b', '#d97706']}
-                style={styles.slideButtonGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-              >
-                <Text style={[styles.slideButtonText, { color: '#ffffff' }]}>Accept Job</Text>
-              </LinearGradient>
-            </Animated.View>
-          </PanGestureHandler>
-          <Text style={[styles.slideText, { color: colors.textSecondary }]}>Slide to Accept Job →</Text>
+      {/* Accept Button - Only show for available jobs */}
+      {jobData.status === 'available' && (
+        <View style={styles.acceptContainer}>
+          <TouchableOpacity style={styles.acceptButton} onPress={handleAcceptJob}>
+            <LinearGradient
+              colors={['#f59e0b', '#d97706']}
+              style={styles.acceptButtonGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              <Text style={styles.acceptButtonText}>Accept Job</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
@@ -571,49 +532,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  slideContainer: {
+  acceptContainer: {
     position: 'absolute',
     bottom: 40,
     left: 20,
     right: 20,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
+  },
+  acceptButton: {
+    borderRadius: 16,
     overflow: 'hidden',
-    borderWidth: 1,
     elevation: 4,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
-  slideBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 30,
-  },
-  slideButton: {
-    position: 'absolute',
-    left: 4,
-    width: 120,
-    height: 52,
-    borderRadius: 26,
-    overflow: 'hidden',
-  },
-  slideButtonGradient: {
+  acceptButtonGradient: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 16,
   },
-  slideButtonText: {
-    fontSize: 14,
+  acceptButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
     fontWeight: '700',
-  },
-  slideText: {
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
   },
 });

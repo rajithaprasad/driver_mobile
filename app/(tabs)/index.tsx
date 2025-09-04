@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Alert,
 } from 'react-native';
-import { MapPin, Clock, DollarSign, Package, Star, Navigation, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { MapPin, Clock, DollarSign, Package, Star, Navigation, ChevronLeft, ChevronRight, Search, Calendar, CheckCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import Header from '@/components/Header';
@@ -31,6 +32,7 @@ const mockJobs = [
     notes: 'Handle with care - fragile items inside',
     priority: 'high',
     date: new Date().toDateString(),
+    status: 'available',
   },
   {
     id: '2',
@@ -47,6 +49,7 @@ const mockJobs = [
     notes: 'Ring doorbell twice',
     priority: 'normal',
     date: new Date().toDateString(),
+    status: 'available',
   },
   {
     id: '3',
@@ -62,7 +65,8 @@ const mockJobs = [
     goods: 'Documents',
     notes: 'Business delivery - ask for signature',
     priority: 'urgent',
-    date: new Date(Date.now() + 86400000).toDateString(), // Tomorrow
+    date: new Date().toDateString(),
+    status: 'scheduled',
   },
   {
     id: '4',
@@ -78,23 +82,24 @@ const mockJobs = [
     goods: 'Clothing Package',
     notes: 'Leave at front door if no answer',
     priority: 'normal',
-    date: new Date(Date.now() - 86400000).toDateString(), // Yesterday
+    date: new Date().toDateString(),
+    status: 'completed',
   },
 ];
 
 export default function HomeScreen() {
   const { colors } = useTheme();
-  const [jobs] = useState(mockJobs);
+  const [jobs, setJobs] = useState(mockJobs);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentDateIndex, setCurrentDateIndex] = useState(0);
-  const [filter, setFilter] = useState<'all' | 'high' | 'urgent'>('all');
+  const [activeTab, setActiveTab] = useState<'find' | 'schedule' | 'completed'>('find');
 
   const generateDates = () => {
     const dates = [];
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 30); // Start from 30 days ago
+    startDate.setDate(startDate.getDate() - 30);
     
-    for (let i = 0; i <= 60; i++) { // 60 days total
+    for (let i = 0; i <= 60; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
       dates.push(date);
@@ -132,11 +137,20 @@ export default function HomeScreen() {
     setSelectedDate(dates[newIndex]);
   };
 
-  // Filter jobs by selected date and priority
+  // Filter jobs by selected date and tab
   const jobsForDate = jobs.filter(job => job.date === selectedDate.toDateString());
-  const filteredJobs = filter === 'all' 
-    ? jobsForDate 
-    : jobsForDate.filter(job => job.priority === filter);
+  const filteredJobs = jobsForDate.filter(job => {
+    switch (activeTab) {
+      case 'find':
+        return job.status === 'available';
+      case 'schedule':
+        return job.status === 'scheduled';
+      case 'completed':
+        return job.status === 'completed';
+      default:
+        return true;
+    }
+  });
 
   const handleViewJob = (job: any) => {
     router.push({
@@ -154,8 +168,28 @@ export default function HomeScreen() {
         payment: job.payment,
         goods: job.goods,
         notes: job.notes,
+        status: job.status,
       },
     });
+  };
+
+  const handleCompleteJob = (jobId: string) => {
+    Alert.alert(
+      'Complete Delivery',
+      'Are you sure you want to mark this delivery as completed?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Yes, Complete', 
+          onPress: () => {
+            router.push({
+              pathname: '/signature',
+              params: { jobId }
+            });
+          }
+        }
+      ]
+    );
   };
 
   const getPriorityColor = (priority: string) => {
@@ -180,23 +214,40 @@ export default function HomeScreen() {
     }
   };
 
+  const getTabIcon = (tab: string) => {
+    switch (tab) {
+      case 'find':
+        return <Search size={16} color={activeTab === tab ? '#ffffff' : colors.text} />;
+      case 'schedule':
+        return <Calendar size={16} color={activeTab === tab ? '#ffffff' : colors.text} />;
+      case 'completed':
+        return <CheckCircle size={16} color={activeTab === tab ? '#ffffff' : colors.text} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <Header title="Available Jobs" />
+      <Header title="Jobs" />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Stats Overview */}
         <View style={styles.statsContainer}>
           <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Package size={24} color={colors.primary} />
-            <Text style={[styles.statNumber, { color: colors.text }]}>12</Text>
+            <Text style={[styles.statNumber, { color: colors.text }]}>
+              {jobs.filter(j => j.status === 'available').length}
+            </Text>
             <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Available</Text>
           </View>
           
           <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Clock size={24} color={colors.accent} />
-            <Text style={[styles.statNumber, { color: colors.text }]}>3</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>In Progress</Text>
+            <Text style={[styles.statNumber, { color: colors.text }]}>
+              {jobs.filter(j => j.status === 'scheduled').length}
+            </Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Scheduled</Text>
           </View>
           
           <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -240,27 +291,30 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Filter Buttons */}
-        <View style={styles.filterContainer}>
-          <Text style={[styles.filterTitle, { color: colors.text }]}>Filter Jobs</Text>
-          <View style={styles.filterButtons}>
-            {['all', 'high', 'urgent'].map((filterType) => (
+        {/* Job Tabs */}
+        <View style={styles.tabsContainer}>
+          <View style={[styles.tabsWrapper, { backgroundColor: colors.surface }]}>
+            {[
+              { key: 'find', label: 'Find Jobs' },
+              { key: 'schedule', label: 'Schedule' },
+              { key: 'completed', label: 'Completed' }
+            ].map((tab) => (
               <TouchableOpacity
-                key={filterType}
+                key={tab.key}
                 style={[
-                  styles.filterButton,
+                  styles.tab,
                   {
-                    backgroundColor: filter === filterType ? colors.primary : colors.surface,
-                    borderColor: colors.border,
+                    backgroundColor: activeTab === tab.key ? colors.primary : 'transparent',
                   }
                 ]}
-                onPress={() => setFilter(filterType as any)}
+                onPress={() => setActiveTab(tab.key as any)}
               >
+                {getTabIcon(tab.key)}
                 <Text style={[
-                  styles.filterButtonText,
-                  { color: filter === filterType ? '#ffffff' : colors.text }
+                  styles.tabText,
+                  { color: activeTab === tab.key ? '#ffffff' : colors.text }
                 ]}>
-                  {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
+                  {tab.label}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -270,13 +324,15 @@ export default function HomeScreen() {
         {/* Jobs List */}
         <View style={styles.jobsContainer}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            {filteredJobs.length} Jobs Available for {formatDate(selectedDate).month} {formatDate(selectedDate).date}
+            {filteredJobs.length} Jobs for {formatDate(selectedDate).month} {formatDate(selectedDate).date}
           </Text>
           
           {filteredJobs.length === 0 ? (
             <View style={[styles.emptyJobs, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <Package size={40} color={colors.border} />
-              <Text style={[styles.emptyJobsText, { color: colors.textSecondary }]}>No jobs available for this date</Text>
+              <Text style={[styles.emptyJobsText, { color: colors.textSecondary }]}>
+                No {activeTab === 'find' ? 'available' : activeTab} jobs for this date
+              </Text>
             </View>
           ) : (
             filteredJobs.map((job) => (
@@ -328,13 +384,25 @@ export default function HomeScreen() {
                   </View>
                 </View>
 
-                {/* Action Button */}
-                <TouchableOpacity 
-                  style={[styles.viewButton, { backgroundColor: colors.primary }]}
-                  onPress={() => handleViewJob(job)}
-                >
-                  <Text style={[styles.viewButtonText, { color: '#ffffff' }]}>View Details</Text>
-                </TouchableOpacity>
+                {/* Action Buttons */}
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity 
+                    style={[styles.viewButton, { backgroundColor: colors.primary }]}
+                    onPress={() => handleViewJob(job)}
+                  >
+                    <Text style={[styles.viewButtonText, { color: '#ffffff' }]}>View Details</Text>
+                  </TouchableOpacity>
+                  
+                  {activeTab === 'schedule' && (
+                    <TouchableOpacity 
+                      style={[styles.completeButton, { backgroundColor: colors.success }]}
+                      onPress={() => handleCompleteJob(job.id)}
+                    >
+                      <CheckCircle size={16} color="#ffffff" />
+                      <Text style={[styles.completeButtonText, { color: '#ffffff' }]}>Complete</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             ))
           )}
@@ -417,28 +485,27 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: 2,
   },
-  filterContainer: {
+  tabsContainer: {
     paddingHorizontal: 20,
     marginBottom: 20,
   },
-  filterTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  filterButtons: {
+  tabsWrapper: {
     flexDirection: 'row',
-    gap: 8,
+    borderRadius: 12,
+    padding: 4,
   },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
+  tab: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 8,
   },
-  filterButtonText: {
+  tabText: {
     fontSize: 14,
     fontWeight: '600',
+    marginLeft: 6,
   },
   jobsContainer: {
     paddingHorizontal: 20,
@@ -580,7 +647,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 4,
   },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
   viewButton: {
+    flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
@@ -592,5 +664,22 @@ const styles = StyleSheet.create({
   viewButtonText: {
     fontSize: 16,
     fontWeight: '700',
+  },
+  completeButton: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderRadius: 12,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  completeButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 6,
   },
 });
