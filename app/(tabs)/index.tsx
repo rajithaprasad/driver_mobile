@@ -232,31 +232,6 @@ export default function HomeScreen() {
       <Header title="Jobs" />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Stats Overview */}
-        <View style={styles.statsContainer}>
-          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Package size={24} color={colors.primary} />
-            <Text style={[styles.statNumber, { color: colors.text }]}>
-              {jobs.filter(j => j.status === 'available').length}
-            </Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Available</Text>
-          </View>
-          
-          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Clock size={24} color={colors.accent} />
-            <Text style={[styles.statNumber, { color: colors.text }]}>
-              {jobs.filter(j => j.status === 'scheduled').length}
-            </Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Scheduled</Text>
-          </View>
-          
-          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <DollarSign size={24} color={colors.success} />
-            <Text style={[styles.statNumber, { color: colors.text }]}>$76</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Today</Text>
-          </View>
-        </View>
-
         {/* Date Scroller */}
         <View style={styles.dateSection}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Select Date</Text>

@@ -89,54 +89,22 @@ export default function WalletScreen() {
         >
           <View style={styles.balanceHeader}>
             <Text style={styles.balanceLabel}>Available Balance</Text>
-            <CreditCard size={24} color="#fff" />
+            <View style={[styles.statusBadge, { backgroundColor: '#10b981' }]}>
+              <Text style={styles.statusText}>ACTIVE</Text>
+            </View>
           </View>
           <Text style={styles.balanceAmount}>${balance.toFixed(2)}</Text>
           <View style={styles.balanceFooter}>
-            <Text style={styles.balanceFooterText}>Driver Earnings Wallet</Text>
-            <View style={styles.cardChip} />
+            <Text style={styles.balanceFooterText}>MoveExpress Earnings</Text>
+            <Text style={styles.releaseText}>Funds release: 2024-02-15</Text>
           </View>
         </LinearGradient>
 
-        {/* Earnings Stats */}
-        <View style={styles.statsContainer}>
-          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.statHeader}>
-              <TrendingUp size={20} color={colors.success} />
-              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Today</Text>
-            </View>
-            <Text style={[styles.statAmount, { color: colors.text }]}>${todayEarnings.toFixed(2)}</Text>
-            <Text style={[styles.statChange, { color: colors.success }]}>+12.5%</Text>
-          </View>
-
-          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.statHeader}>
-              <DollarSign size={20} color={colors.accent} />
-              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>This Week</Text>
-            </View>
-            <Text style={[styles.statAmount, { color: colors.text }]}>${weekEarnings.toFixed(2)}</Text>
-            <Text style={[styles.statChange, { color: colors.success }]}>+8.3%</Text>
-          </View>
-        </View>
-
-        {/* Action Buttons */}
-        <View style={styles.actionContainer}>
-          <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
-            <LinearGradient
-              colors={['#f59e0b', '#d97706']}
-              style={styles.withdrawButtonGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-            >
-              <ArrowUpRight size={20} color="#ffffff" />
-              <Text style={styles.withdrawButtonText}>Withdraw</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.stripeButton, { backgroundColor: colors.card, borderColor: colors.primary }]} onPress={handleStripeSetup}>
-            <CreditCard size={20} color={colors.primary} />
-            <Text style={[styles.stripeButtonText, { color: colors.primary }]}>Setup Stripe</Text>
-          </TouchableOpacity>
+        {/* Release Info */}
+        <View style={[styles.releaseInfoCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.releaseInfoText, { color: colors.textSecondary }]}>
+            This fund will automatically release to Stripe on 2024-02-15
+          </Text>
         </View>
 
         {/* Recent Transactions */}
@@ -235,90 +203,38 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     opacity: 0.8,
   },
-  cardChip: {
-    width: 30,
-    height: 20,
-    backgroundColor: '#FFD700',
-    borderRadius: 4,
+  releaseText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '500',
+    opacity: 0.8,
   },
-  statsContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
-  statCard: {
-    flex: 1,
+  statusText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  releaseInfoCard: {
     padding: 16,
     borderRadius: 12,
-    alignItems: 'center',
-    elevation: 2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    marginBottom: 24,
     borderWidth: 1,
-  },
-  statHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  statLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  statAmount: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  statChange: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  actionContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 32,
-  },
-  withdrawButton: {
-    flex: 1,
-    borderRadius: 12,
-    overflow: 'hidden',
-    elevation: 3,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  withdrawButtonGradient: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  withdrawButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
-    marginLeft: 8,
-  },
-  stripeButton: {
-    flex: 1,
-    borderWidth: 2,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
     elevation: 2,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  stripeButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginLeft: 8,
+  releaseInfoText: {
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+    lineHeight: 20,
   },
   transactionsContainer: {
     marginBottom: 20,

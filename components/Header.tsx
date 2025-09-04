@@ -72,7 +72,7 @@ export default function Header({ title, showNotifications = true, showMenu = tru
           >
             <Text style={styles.logoText}>DD</Text>
           </LinearGradient>
-          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+          <Text style={[styles.title, { color: colors.text }]}>MoveExpress</Text>
         </View>
         
         <View style={styles.headerRight}>

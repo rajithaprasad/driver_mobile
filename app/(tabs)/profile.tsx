@@ -260,8 +260,8 @@ export default function ProfileScreen() {
         </View>
 
         <View style={[styles.footer, { borderTopColor: colors.border }]}>
-          <Text style={[styles.footerText, { color: colors.textSecondary }]}>DriveDelivery v1.0.0</Text>
-          <Text style={[styles.footerText, { color: colors.textSecondary }]}>© 2024 DriveDelivery Inc.</Text>
+          <Text style={[styles.footerText, { color: colors.textSecondary }]}>MoveExpress v1.0.0</Text>
+          <Text style={[styles.footerText, { color: colors.textSecondary }]}>© 2024 MoveExpress Inc.</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

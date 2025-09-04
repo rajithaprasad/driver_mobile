@@ -66,7 +66,7 @@ export default function LoginScreen() {
             >
               <Text style={styles.logoText}>DD</Text>
             </LinearGradient>
-            <Text style={[styles.title, { color: colors.text }]}>DriveDelivery</Text>
+            <Text style={[styles.title, { color: colors.text }]}>MoveExpress</Text>
             <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Professional Driver Portal</Text>
           </View>
 
@@ -135,7 +135,7 @@ export default function LoginScreen() {
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={[styles.footerText, { color: colors.textSecondary }]}>© 2024 DriveDelivery Inc.</Text>
+            <Text style={[styles.footerText, { color: colors.textSecondary }]}>© 2024 MoveExpress Inc.</Text>
             <Text style={[styles.footerSubtext, { color: colors.textSecondary }]}>Secure Driver Authentication</Text>
           </View>
         </View>

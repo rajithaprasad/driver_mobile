@@ -22,7 +22,7 @@ const faqData = [
   {
     id: '2',
     question: 'When will I receive payment?',
-    answer: 'Payments are processed weekly and deposited to your linked bank account within 24-48 hours.',
+    answer: 'Payments are processed weekly and automatically released to your Stripe account.',
   },
   {
     id: '3',
@@ -152,7 +152,7 @@ export default function HelpScreen() {
         <View style={[styles.emergencyCard, { backgroundColor: colors.error, borderColor: colors.error }]}>
           <Text style={styles.emergencyTitle}>Emergency Support</Text>
           <Text style={styles.emergencyText}>
-            For urgent issues or emergencies during deliveries, call our 24/7 hotline:
+            For urgent issues or emergencies during deliveries, call MoveExpress 24/7 hotline:
           </Text>
           <TouchableOpacity style={styles.emergencyButton} onPress={() => Linking.openURL('tel:+15559114357')}>
             <Phone size={16} color="#ffffff" />
