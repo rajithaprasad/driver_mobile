@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, RotateCcw, CheckCircle, X } from 'lucide-react-native';
+import { ArrowLeft, RotateCcw, CircleCheck as CheckCircle, X } from 'lucide-react-native';
 import SignatureCanvas from 'react-native-signature-canvas';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/contexts/ThemeContext';

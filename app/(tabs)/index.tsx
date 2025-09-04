@@ -9,7 +9,7 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
-import { MapPin, Clock, DollarSign, Package, Star, Navigation, ChevronLeft, ChevronRight, Search, Calendar, CheckCircle } from 'lucide-react-native';
+import { MapPin, Clock, DollarSign, Package, Star, Navigation, ChevronLeft, ChevronRight, Search, Calendar, CircleCheck as CheckCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import Header from '@/components/Header';
