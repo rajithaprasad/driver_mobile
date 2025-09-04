@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { MapPin, Clock, DollarSign, Package, Star, Navigation, ChevronLeft, ChevronRight, Search, Calendar, CircleCheck as CheckCircle } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import Header from '@/components/Header';
