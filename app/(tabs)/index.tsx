@@ -96,7 +96,6 @@ export default function HomeScreen() {
   const [currentDateIndex, setCurrentDateIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'find' | 'schedule' | 'completed'>('find');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const generateDates = () => {
     const dates = [];
