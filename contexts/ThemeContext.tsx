@@ -28,7 +28,7 @@ const lightColors = {
   text: '#1e293b',
   textSecondary: '#64748b',
   primary: '#6366f1',
-  secondary: '#8b5cf6',
+  secondary: '#8832ab',
   accent: '#f59e0b',
   success: '#10b981',
   warning: '#f59e0b',
@@ -44,7 +44,7 @@ const darkColors = {
   text: '#f1f5f9',
   textSecondary: '#94a3b8',
   primary: '#818cf8',
-  secondary: '#a78bfa',
+  secondary: '#8832ab',
   accent: '#fbbf24',
   success: '#34d399',
   warning: '#fbbf24',
@@ -57,10 +57,10 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useColorScheme();
-  const [isDark, setIsDark] = useState(systemColorScheme === 'dark');
+  const [isDark, setIsDark] = useState(false); // Default to light mode
 
   useEffect(() => {
-    setIsDark(systemColorScheme === 'dark');
+    // Keep light mode as default, don't follow system
   }, [systemColorScheme]);
 
   const toggleTheme = () => {

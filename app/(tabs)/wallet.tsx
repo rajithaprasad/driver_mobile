@@ -55,25 +55,9 @@ const mockTransactions = [
 export default function WalletScreen() {
   const { colors } = useTheme();
   const [balance] = useState(1247.89);
-  const [todayEarnings] = useState(76.50);
-  const [weekEarnings] = useState(342.75);
   const [transactions] = useState(mockTransactions);
+  const [accountStatus] = useState<'active' | 'hold'>('active');
 
-  const handleWithdraw = () => {
-    Alert.alert(
-      'Withdraw Funds',
-      'Stripe integration would be implemented here for secure withdrawals.',
-      [{ text: 'OK' }]
-    );
-  };
-
-  const handleStripeSetup = () => {
-    Alert.alert(
-      'Stripe Integration',
-      'This would connect to Stripe for payment processing and withdrawals.',
-      [{ text: 'OK' }]
-    );
-  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -89,14 +73,16 @@ export default function WalletScreen() {
         >
           <View style={styles.balanceHeader}>
             <Text style={styles.balanceLabel}>Available Balance</Text>
-            <View style={[styles.statusBadge, { backgroundColor: '#10b981' }]}>
-              <Text style={styles.statusText}>ACTIVE</Text>
+            <View style={[
+              styles.statusBadge, 
+              { backgroundColor: accountStatus === 'active' ? '#10b981' : '#ef4444' }
+            ]}>
+              <Text style={styles.statusText}>{accountStatus.toUpperCase()}</Text>
             </View>
           </View>
           <Text style={styles.balanceAmount}>${balance.toFixed(2)}</Text>
           <View style={styles.balanceFooter}>
             <Text style={styles.balanceFooterText}>MoveExpress Earnings</Text>
-            <Text style={styles.releaseText}>Funds release: 2024-02-15</Text>
           </View>
         </LinearGradient>
 
@@ -200,12 +186,6 @@ const styles = StyleSheet.create({
   balanceFooterText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: '500',
-    opacity: 0.8,
-  },
-  releaseText: {
-    color: '#fff',
-    fontSize: 12,
     fontWeight: '500',
     opacity: 0.8,
   },
