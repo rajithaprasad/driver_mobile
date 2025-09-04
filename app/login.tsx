@@ -241,6 +241,7 @@ const styles = StyleSheet.create({
   demoButton: {
     alignItems: 'center',
     paddingVertical: 12,
+  }
   demoButton: {
     alignItems: 'center',
     paddingVertical: 12,
@@ -250,6 +251,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   footer: {
+  }
   footerText: {
     fontSize: 12,
     fontWeight: '500',
