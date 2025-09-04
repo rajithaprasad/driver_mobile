@@ -287,13 +287,6 @@ export default function HomeScreen() {
               >
                 <Calendar size={20} color="#ffffff" />
               </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.calendarButton, { backgroundColor: colors.primary }]} 
-                onPress={openCalendar}
-              >
-                <Calendar size={20} color="#ffffff" />
-              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -411,18 +404,6 @@ export default function HomeScreen() {
           )}
         </View>
       </ScrollView>
-
-      {/* Date Picker Modal */}
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={handleDatePickerChange}
-          minimumDate={dates[0]}
-          maximumDate={dates[dates.length - 1]}
-        />
-      )}
 
       {/* Date Picker Modal */}
       {showDatePicker && (

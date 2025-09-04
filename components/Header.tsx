@@ -36,6 +36,9 @@ export default function Header({ title, showNotifications = true, showMenu = tru
       case 'settings':
         router.push('/settings');
         break;
+      case 'change-password':
+        router.push('/change-password');
+        break;
       case 'notifications':
         router.push('/notifications');
         break;
