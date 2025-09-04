@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export default function RootLayout() {
   useFrameworkReady();
@@ -19,6 +20,10 @@ export default function RootLayout() {
         <Stack.Screen name="settings" />
         <Stack.Screen name="privacy" />
         <Stack.Screen name="help" />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

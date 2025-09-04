@@ -106,7 +106,6 @@ export default function ProfileScreen() {
   // Filter orders by selected date
   const ordersForDate = mockOrders.filter(order => order.date === selectedDate.toDateString());
 
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <Header title="Profile" />

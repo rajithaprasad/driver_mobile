@@ -8,8 +8,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
-import { ArrowLeft, Bell, CircleAlert as AlertCircle, Info, CircleCheck as CheckCircle, Clock, Truck } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { ArrowLeft, CircleAlert as AlertCircle, Info, CircleCheck as CheckCircle, Clock } from 'lucide-react-native';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const mockNotifications = [
   {
@@ -55,71 +55,54 @@ const mockNotifications = [
 ];
 
 export default function NotificationsScreen() {
+  const { colors } = useTheme();
+
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'urgent':
-        return <AlertCircle size={20} color="#FF6B6B" />;
+        return <AlertCircle size={20} color={colors.error} />;
       case 'success':
-        return <CheckCircle size={20} color="#4ADE80" />;
+        return <CheckCircle size={20} color={colors.success} />;
       case 'info':
       default:
-        return <Info size={20} color="#6A0DAD" />;
+        return <Info size={20} color={colors.primary} />;
     }
   };
 
   const getNotificationColor = (type: string) => {
     switch (type) {
       case 'urgent':
-        return '#FF6B6B';
+        return colors.error;
       case 'success':
-        return '#4ADE80';
+        return colors.success;
       case 'info':
       default:
-        return '#6A0DAD';
+        return colors.primary;
     }
   };
 
-  const openNotifications = () => {
-    router.push('/notifications');
-  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <ArrowLeft size={24} color="#6A0DAD" />
-          </TouchableOpacity>
-          <LinearGradient
-            colors={['#6A0DAD', '#8A2BE2']}
-            style={styles.logoContainer}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <Truck size={24} color="#fff" />
-          </LinearGradient>
-          <Text style={styles.companyName}>DriveDelivery</Text>
-        </View>
-        <TouchableOpacity style={styles.notificationButton} onPress={openNotifications}>
-          <Bell size={24} color="#6A0DAD" />
-          <View style={styles.notificationBadge}>
-            <Text style={styles.badgeText}>3</Text>
-          </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: colors.surface }]} onPress={() => router.back()}>
+          <ArrowLeft size={24} color={colors.primary} />
         </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Notifications</Text>
+        <View style={styles.headerRight} />
       </View>
 
-      {/* Page Title */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.pageTitle}>Admin Broadcasts</Text>
-        <Text style={styles.pageSubtitle}>Important messages from management</Text>
+      <View style={[styles.titleContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+        <Text style={[styles.pageTitle, { color: colors.text }]}>Admin Broadcasts</Text>
+        <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>Important messages from management</Text>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {mockNotifications.map((notification) => (
           <View key={notification.id} style={[
             styles.notificationCard,
-            !notification.read && styles.unreadCard
+            { backgroundColor: colors.card, borderColor: colors.border },
+            !notification.read && { borderLeftWidth: 4, borderLeftColor: colors.primary, backgroundColor: colors.surface }
           ]}>
             <View style={styles.notificationHeader}>
               <View style={styles.notificationLeft}>
@@ -130,20 +113,20 @@ export default function NotificationsScreen() {
                   {getNotificationIcon(notification.type)}
                 </View>
                 <View style={styles.notificationInfo}>
-                  <Text style={styles.notificationTitle}>{notification.title}</Text>
+                  <Text style={[styles.notificationTitle, { color: colors.text }]}>{notification.title}</Text>
                   <View style={styles.timeContainer}>
-                    <Clock size={12} color="#666" />
-                    <Text style={styles.notificationTime}>{notification.time}</Text>
+                    <Clock size={12} color={colors.textSecondary} />
+                    <Text style={[styles.notificationTime, { color: colors.textSecondary }]}>{notification.time}</Text>
                   </View>
                 </View>
               </View>
-              {!notification.read && <View style={styles.unreadDot} />}
+              {!notification.read && <View style={[styles.unreadDot, { backgroundColor: colors.primary }]} />}
             </View>
             
-            <Text style={styles.notificationMessage}>{notification.message}</Text>
+            <Text style={[styles.notificationMessage, { color: colors.text }]}>{notification.message}</Text>
             
             {notification.type === 'urgent' && (
-              <View style={styles.urgentBanner}>
+              <View style={[styles.urgentBanner, { backgroundColor: colors.error }]}>
                 <Text style={styles.urgentText}>URGENT - Requires Attention</Text>
               </View>
             )}
@@ -157,89 +140,39 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', 
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   backButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#f8f9fa',
-    marginRight: 12,
-  },
-  logoContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    elevation: 4,
-    shadowColor: '#6A0DAD',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  companyName: {
-    color: '#333',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  notificationButton: {
-    position: 'relative',
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#f8f9fa',
-  },
-  notificationBadge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    backgroundColor: '#FF4444',
+    padding: 10,
     borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  badgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  headerRight: {
+    width: 44,
   },
   titleContainer: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: '#f8f9fa',
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
   pageTitle: {
-    color: '#333',
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 4,
   },
   pageSubtitle: {
-    color: '#666',
     fontSize: 14,
+    fontWeight: '500',
   },
   content: {
     flex: 1,
@@ -247,22 +180,14 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   notificationCard: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
-  },
-  unreadCard: {
-    borderLeftWidth: 4,
-    borderLeftColor: '#6A0DAD',
-    backgroundColor: '#f8f9fa',
   },
   notificationHeader: {
     flexDirection: 'row',
@@ -287,9 +212,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   notificationTitle: {
-    color: '#333',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 4,
   },
   timeContainer: {
@@ -297,24 +221,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   notificationTime: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '500',
     marginLeft: 4,
   },
   unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#6A0DAD',
   },
   notificationMessage: {
-    color: '#333',
     fontSize: 14,
+    fontWeight: '500',
     lineHeight: 20,
     marginBottom: 12,
   },
   urgentBanner: {
-    backgroundColor: '#FF6B6B',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
@@ -323,7 +245,7 @@ const styles = StyleSheet.create({
   urgentText: {
     color: '#fff',
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: '700',
     textTransform: 'uppercase',
   },
 });

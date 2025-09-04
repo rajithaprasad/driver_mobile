@@ -22,10 +22,12 @@ import Animated, {
   withSpring 
 } from 'react-native-reanimated';
 import { PanGestureHandler } from 'react-native-gesture-handler';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
 export default function JobDetailsScreen() {
+  const { colors } = useTheme();
   const params = useLocalSearchParams();
   const [isAccepted, setIsAccepted] = useState(false);
   
@@ -101,13 +103,12 @@ export default function JobDetailsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={24} color="#6A0DAD" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: colors.surface }]} onPress={() => router.back()}>
+          <ArrowLeft size={24} color={colors.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Job Details</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Job Details</Text>
         <View style={styles.headerRight} />
       </View>
 
@@ -136,82 +137,82 @@ export default function JobDetailsScreen() {
           </View>
           
           <TouchableOpacity style={styles.directionsButton} onPress={handleGetDirections}>
-            <Navigation size={16} color="#000" />
-            <Text style={styles.directionsText}>Get Directions</Text>
+            <Navigation size={16} color="#ffffff" />
+            <Text style={[styles.directionsText, { color: '#ffffff' }]}>Get Directions</Text>
           </TouchableOpacity>
         </View>
 
         {/* Order Details Card */}
-        <View style={styles.detailsCard}>
+        <View style={[styles.detailsCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.orderHeader}>
             <View>
-              <Text style={styles.orderNumber}>{jobData.orderNumber}</Text>
-              <Text style={styles.paymentAmount}>{jobData.payment}</Text>
+              <Text style={[styles.orderNumber, { color: colors.accent }]}>{jobData.orderNumber}</Text>
+              <Text style={[styles.paymentAmount, { color: colors.success }]}>{jobData.payment}</Text>
             </View>
-            <View style={styles.timeContainer}>
-              <Clock size={16} color="#FFA500" />
-              <Text style={styles.timeText}>{jobData.time}</Text>
+            <View style={[styles.timeContainer, { backgroundColor: colors.surface }]}>
+              <Clock size={16} color={colors.accent} />
+              <Text style={[styles.timeText, { color: colors.accent }]}>{jobData.time}</Text>
             </View>
           </View>
 
           {/* Customer Information */}
           <View style={styles.customerSection}>
-            <Text style={styles.sectionTitle}>Customer Details</Text>
-            <View style={styles.customerInfo}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Customer Details</Text>
+            <View style={[styles.customerInfo, { backgroundColor: colors.surface }]}>
               <View style={styles.customerLeft}>
-                <View style={styles.customerAvatar}>
+                <View style={[styles.customerAvatar, { backgroundColor: colors.primary }]}>
                   <User size={20} color="#fff" />
                 </View>
                 <View style={styles.customerDetails}>
-                  <Text style={styles.customerName}>{jobData.customer}</Text>
+                  <Text style={[styles.customerName, { color: colors.text }]}>{jobData.customer}</Text>
                   <TouchableOpacity onPress={handleCallCustomer} style={styles.phoneContainer}>
-                    <Phone size={14} color="#4ADE80" />
-                    <Text style={styles.phoneNumber}>{jobData.customerPhone}</Text>
+                    <Phone size={14} color={colors.success} />
+                    <Text style={[styles.phoneNumber, { color: colors.success }]}>{jobData.customerPhone}</Text>
                   </TouchableOpacity>
                   <View style={styles.ratingContainer}>
-                    <Star size={12} color="#FFA500" fill="#FFA500" />
-                    <Text style={styles.ratingText}>{jobData.customerRating}</Text>
+                    <Star size={12} color={colors.accent} fill={colors.accent} />
+                    <Text style={[styles.ratingText, { color: colors.accent }]}>{jobData.customerRating}</Text>
                   </View>
                 </View>
               </View>
-              <TouchableOpacity style={styles.callButton} onPress={handleCallCustomer}>
-                <Phone size={16} color="#4ADE80" />
+              <TouchableOpacity style={[styles.callButton, { backgroundColor: colors.background, borderColor: colors.success }]} onPress={handleCallCustomer}>
+                <Phone size={16} color={colors.success} />
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Goods Information */}
           <View style={styles.goodsSection}>
-            <Text style={styles.sectionTitle}>Package Details</Text>
-            <View style={styles.goodsInfo}>
-              <Package size={20} color="#FFA500" />
-              <Text style={styles.goodsText}>{jobData.goods}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Package Details</Text>
+            <View style={[styles.goodsInfo, { backgroundColor: colors.surface }]}>
+              <Package size={20} color={colors.accent} />
+              <Text style={[styles.goodsText, { color: colors.text }]}>{jobData.goods}</Text>
             </View>
           </View>
 
           {/* Locations */}
           <View style={styles.locationSection}>
-            <Text style={styles.sectionTitle}>Delivery Route</Text>
-            <View style={styles.locationContainer}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Delivery Route</Text>
+            <View style={[styles.locationContainer, { backgroundColor: colors.surface }]}>
               <View style={styles.locationItem}>
-                <View style={styles.locationIcon}>
-                  <MapPin size={16} color="#FFA500" />
+                <View style={[styles.locationIcon, { backgroundColor: colors.background }]}>
+                  <MapPin size={16} color={colors.accent} />
                 </View>
                 <View style={styles.locationDetails}>
-                  <Text style={styles.locationLabel}>Pickup Location</Text>
-                  <Text style={styles.locationAddress}>{jobData.pickupAddress}</Text>
+                  <Text style={[styles.locationLabel, { color: colors.accent }]}>Pickup Location</Text>
+                  <Text style={[styles.locationAddress, { color: colors.text }]}>{jobData.pickupAddress}</Text>
                 </View>
               </View>
 
-              <View style={styles.routeLine} />
+              <View style={[styles.routeLine, { backgroundColor: colors.border }]} />
 
               <View style={styles.locationItem}>
-                <View style={[styles.locationIcon, styles.dropIcon]}>
-                  <MapPin size={16} color="#6A0DAD" />
+                <View style={[styles.locationIcon, { backgroundColor: colors.background }]}>
+                  <MapPin size={16} color={colors.primary} />
                 </View>
                 <View style={styles.locationDetails}>
-                  <Text style={styles.locationLabel}>Drop Location</Text>
-                  <Text style={styles.locationAddress}>{jobData.dropAddress}</Text>
+                  <Text style={[styles.locationLabel, { color: colors.primary }]}>Drop Location</Text>
+                  <Text style={[styles.locationAddress, { color: colors.text }]}>{jobData.dropAddress}</Text>
                 </View>
               </View>
             </View>
@@ -220,22 +221,22 @@ export default function JobDetailsScreen() {
           {/* Notes */}
           {jobData.notes && (
             <View style={styles.notesSection}>
-              <Text style={styles.sectionTitle}>Delivery Notes</Text>
-              <View style={styles.notesContainer}>
-                <Text style={styles.notesText}>{jobData.notes}</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Delivery Notes</Text>
+              <View style={[styles.notesContainer, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.notesText, { color: colors.text }]}>{jobData.notes}</Text>
               </View>
             </View>
           )}
 
           {/* Distance & Time */}
           <View style={styles.summaryContainer}>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Distance</Text>
-              <Text style={styles.summaryValue}>{jobData.distance}</Text>
+            <View style={[styles.summaryItem, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Distance</Text>
+              <Text style={[styles.summaryValue, { color: colors.text }]}>{jobData.distance}</Text>
             </View>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Estimated Time</Text>
-              <Text style={styles.summaryValue}>15-20 min</Text>
+            <View style={[styles.summaryItem, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Estimated Time</Text>
+              <Text style={[styles.summaryValue, { color: colors.text }]}>15-20 min</Text>
             </View>
           </View>
         </View>
@@ -243,21 +244,21 @@ export default function JobDetailsScreen() {
 
       {/* Slide to Accept */}
       {!isAccepted && (
-        <View style={styles.slideContainer}>
-          <Animated.View style={[styles.slideBackground, backgroundAnimatedStyle]} />
+        <View style={[styles.slideContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Animated.View style={[styles.slideBackground, backgroundAnimatedStyle, { backgroundColor: colors.success }]} />
           <PanGestureHandler onGestureEvent={gestureHandler}>
             <Animated.View style={[styles.slideButton, animatedStyle]}>
               <LinearGradient
-                colors={['#FFA500', '#FF8C00']}
+                colors={['#f59e0b', '#d97706']}
                 style={styles.slideButtonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-                <Text style={styles.slideButtonText}>Accept Job</Text>
+                <Text style={[styles.slideButtonText, { color: '#ffffff' }]}>Accept Job</Text>
               </LinearGradient>
             </Animated.View>
           </PanGestureHandler>
-          <Text style={styles.slideText}>Slide to Accept Job →</Text>
+          <Text style={[styles.slideText, { color: colors.textSecondary }]}>Slide to Accept Job →</Text>
         </View>
       )}
     </SafeAreaView>
@@ -267,7 +268,6 @@ export default function JobDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
@@ -275,27 +275,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   backButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#f8f9fa',
+    padding: 10,
+    borderRadius: 10,
   },
   headerTitle: {
-    color: '#333',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '700',
   },
   headerRight: {
-    width: 40,
+    width: 44,
   },
   content: {
     flex: 1,
@@ -366,37 +357,32 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 16,
     right: 16,
-    backgroundColor: '#FFA500',
+    backgroundColor: '#f59e0b',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
     elevation: 4,
-    shadowColor: '#FFA500',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
   directionsText: {
-    color: '#000',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 4,
   },
   detailsCard: {
-    backgroundColor: '#fff',
     marginHorizontal: 20,
     marginBottom: 120,
     borderRadius: 16,
     padding: 20,
     elevation: 4,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   orderHeader: {
     flexDirection: 'row',
@@ -405,47 +391,41 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#e2e8f0',
   },
   orderNumber: {
-    color: '#FFA500',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 4,
   },
   paymentAmount: {
-    color: '#4ADE80',
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
   },
   timeText: {
-    color: '#FFA500',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 6,
   },
   customerSection: {
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#333',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 12,
   },
   customerInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     padding: 16,
     borderRadius: 12,
   },
@@ -458,7 +438,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#6A0DAD',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -467,9 +446,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   customerName: {
-    color: '#333',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 4,
   },
   phoneContainer: {
@@ -478,33 +456,28 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   phoneNumber: {
-    color: '#4ADE80',
     fontSize: 14,
+    fontWeight: '600',
     marginLeft: 6,
     textDecorationLine: 'underline',
-    fontWeight: '500',
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   ratingText: {
-    color: '#FFA500',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 4,
   },
   callButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#4ADE80',
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -515,21 +488,18 @@ const styles = StyleSheet.create({
   goodsInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     padding: 16,
     borderRadius: 12,
   },
   goodsText: {
-    color: '#333',
     fontSize: 16,
+    fontWeight: '600',
     marginLeft: 12,
-    fontWeight: '500',
   },
   locationSection: {
     marginBottom: 24,
   },
   locationContainer: {
-    backgroundColor: '#f8f9fa',
     padding: 16,
     borderRadius: 12,
   },
@@ -542,39 +512,31 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-  },
-  dropIcon: {
-    backgroundColor: '#fff',
   },
   locationDetails: {
     flex: 1,
   },
   locationLabel: {
-    color: '#FFA500',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 2,
     textTransform: 'uppercase',
   },
   locationAddress: {
-    color: '#333',
     fontSize: 14,
+    fontWeight: '600',
     lineHeight: 18,
-    fontWeight: '500',
   },
   routeLine: {
     width: 2,
     height: 20,
-    backgroundColor: '#ddd',
     marginLeft: 15,
     marginVertical: 4,
   },
@@ -582,13 +544,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   notesContainer: {
-    backgroundColor: '#f8f9fa',
     padding: 16,
     borderRadius: 12,
   },
   notesText: {
-    color: '#333',
     fontSize: 14,
+    fontWeight: '500',
     lineHeight: 20,
   },
   summaryContainer: {
@@ -597,21 +558,18 @@ const styles = StyleSheet.create({
   },
   summaryItem: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
   },
   summaryLabel: {
-    color: '#666',
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
     marginBottom: 4,
   },
   summaryValue: {
-    color: '#333',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   slideContainer: {
     position: 'absolute',
@@ -619,14 +577,11 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     height: 60,
-    backgroundColor: '#f8f9fa',
     borderRadius: 30,
     justifyContent: 'center',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#f0f0f0',
     elevation: 4,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -637,7 +592,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#4ADE80',
     borderRadius: 30,
   },
   slideButton: {
@@ -654,14 +608,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   slideButtonText: {
-    color: '#000',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   slideText: {
-    color: '#666',
     fontSize: 14,
+    fontWeight: '600',
     textAlign: 'center',
-    fontWeight: '500',
   },
 });

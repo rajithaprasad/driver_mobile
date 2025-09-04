@@ -9,8 +9,9 @@ import {
   Alert,
 } from 'react-native';
 import { router } from 'expo-router';
-import { ArrowLeft, FileText, Download, Upload, Eye, Calendar, CircleCheck as CheckCircle, CircleAlert as AlertCircle, Clock, Truck, Bell } from 'lucide-react-native';
+import { ArrowLeft, FileText, Download, Upload, Eye, CircleCheck as CheckCircle, CircleAlert as AlertCircle, Clock } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const mockDocuments = [
   {
@@ -61,31 +62,32 @@ const mockDocuments = [
 ];
 
 export default function DocumentsScreen() {
+  const { colors } = useTheme();
   const [documents] = useState(mockDocuments);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'verified':
-        return <CheckCircle size={16} color="#4ADE80" />;
+        return <CheckCircle size={16} color={colors.success} />;
       case 'pending':
-        return <Clock size={16} color="#FFA500" />;
+        return <Clock size={16} color={colors.warning} />;
       case 'expired':
-        return <AlertCircle size={16} color="#FF6B6B" />;
+        return <AlertCircle size={16} color={colors.error} />;
       default:
-        return <FileText size={16} color="#666" />;
+        return <FileText size={16} color={colors.textSecondary} />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'verified':
-        return '#4ADE80';
+        return colors.success;
       case 'pending':
-        return '#FFA500';
+        return colors.warning;
       case 'expired':
-        return '#FF6B6B';
+        return colors.error;
       default:
-        return '#666';
+        return colors.textSecondary;
     }
   };
 
@@ -101,9 +103,6 @@ export default function DocumentsScreen() {
     Alert.alert('Download Document', `Downloading ${docName}...`);
   };
 
-  const openNotifications = () => {
-    router.push('/notifications');
-  };
 
   const isExpiringSoon = (expiryDate: string) => {
     const expiry = new Date(expiryDate);
@@ -114,48 +113,31 @@ export default function DocumentsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <ArrowLeft size={24} color="#6A0DAD" />
-          </TouchableOpacity>
-          <LinearGradient
-            colors={['#6A0DAD', '#8A2BE2']}
-            style={styles.logoContainer}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <Truck size={24} color="#fff" />
-          </LinearGradient>
-          <Text style={styles.companyName}>DriveDelivery</Text>
-        </View>
-        <TouchableOpacity style={styles.notificationButton} onPress={openNotifications}>
-          <Bell size={24} color="#6A0DAD" />
-          <View style={styles.notificationBadge}>
-            <Text style={styles.badgeText}>3</Text>
-          </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: colors.surface }]} onPress={() => router.back()}>
+          <ArrowLeft size={24} color={colors.primary} />
         </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Documents</Text>
+        <View style={styles.headerRight} />
       </View>
 
-      {/* Page Title */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.pageTitle}>Document Management</Text>
-        <Text style={styles.pageSubtitle}>Manage your driver documents and certifications</Text>
+      <View style={[styles.titleContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+        <Text style={[styles.pageTitle, { color: colors.text }]}>Document Management</Text>
+        <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>Manage your driver documents and certifications</Text>
       </View>
 
       {/* Upload Button */}
       <View style={styles.uploadContainer}>
         <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
           <LinearGradient
-            colors={['#FFA500', '#FF8C00']}
+            colors={['#f59e0b', '#d97706']}
             style={styles.uploadButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <Upload size={20} color="#000" />
-            <Text style={styles.uploadButtonText}>Upload New Document</Text>
+            <Upload size={20} color="#ffffff" />
+            <Text style={[styles.uploadButtonText, { color: '#ffffff' }]}>Upload New Document</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -165,8 +147,9 @@ export default function DocumentsScreen() {
         {documents.map((document) => (
           <View key={document.id} style={[
             styles.documentCard,
-            document.status === 'expired' && styles.expiredCard,
-            isExpiringSoon(document.expiryDate) && styles.expiringSoonCard
+            { backgroundColor: colors.card, borderColor: colors.border },
+            document.status === 'expired' && { borderLeftWidth: 4, borderLeftColor: colors.error, backgroundColor: colors.surface },
+            isExpiringSoon(document.expiryDate) && { borderLeftWidth: 4, borderLeftColor: colors.warning, backgroundColor: colors.surface }
           ]}>
             <View style={styles.documentHeader}>
               <View style={styles.documentLeft}>
@@ -177,12 +160,12 @@ export default function DocumentsScreen() {
                   <FileText size={24} color={getStatusColor(document.status)} />
                 </View>
                 <View style={styles.documentInfo}>
-                  <Text style={styles.documentName}>{document.name}</Text>
-                  <Text style={styles.documentSize}>{document.size}</Text>
+                  <Text style={[styles.documentName, { color: colors.text }]}>{document.name}</Text>
+                  <Text style={[styles.documentSize, { color: colors.textSecondary }]}>{document.size}</Text>
                 </View>
               </View>
               
-              <View style={styles.statusContainer}>
+              <View style={[styles.statusContainer, { backgroundColor: colors.surface }]}>
                 {getStatusIcon(document.status)}
                 <Text style={[
                   styles.statusText,
@@ -196,15 +179,16 @@ export default function DocumentsScreen() {
             <View style={styles.documentDetails}>
               <View style={styles.dateContainer}>
                 <View style={styles.dateItem}>
-                  <Text style={styles.dateLabel}>Uploaded</Text>
-                  <Text style={styles.dateValue}>{document.uploadDate}</Text>
+                  <Text style={[styles.dateLabel, { color: colors.textSecondary }]}>Uploaded</Text>
+                  <Text style={[styles.dateValue, { color: colors.text }]}>{document.uploadDate}</Text>
                 </View>
                 <View style={styles.dateItem}>
-                  <Text style={styles.dateLabel}>Expires</Text>
+                  <Text style={[styles.dateLabel, { color: colors.textSecondary }]}>Expires</Text>
                   <Text style={[
                     styles.dateValue,
-                    isExpiringSoon(document.expiryDate) && styles.expiringDate,
-                    document.status === 'expired' && styles.expiredDate
+                    { color: colors.text },
+                    isExpiringSoon(document.expiryDate) && { color: colors.warning, fontWeight: '700' },
+                    document.status === 'expired' && { color: colors.error, fontWeight: '700' }
                   ]}>
                     {document.expiryDate}
                   </Text>
@@ -212,44 +196,46 @@ export default function DocumentsScreen() {
               </View>
 
               {isExpiringSoon(document.expiryDate) && (
-                <View style={styles.warningBanner}>
-                  <AlertCircle size={16} color="#FFA500" />
-                  <Text style={styles.warningText}>Expires in {Math.ceil((new Date(document.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days</Text>
+                <View style={[styles.warningBanner, { backgroundColor: `${colors.warning}20` }]}>
+                  <AlertCircle size={16} color={colors.warning} />
+                  <Text style={[styles.warningText, { color: colors.warning }]}>
+                    Expires in {Math.ceil((new Date(document.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
+                  </Text>
                 </View>
               )}
 
               {document.status === 'expired' && (
-                <View style={styles.expiredBanner}>
-                  <AlertCircle size={16} color="#FF6B6B" />
-                  <Text style={styles.expiredText}>Document has expired - please upload a new version</Text>
+                <View style={[styles.expiredBanner, { backgroundColor: `${colors.error}20` }]}>
+                  <AlertCircle size={16} color={colors.error} />
+                  <Text style={[styles.expiredText, { color: colors.error }]}>Document has expired - please upload a new version</Text>
                 </View>
               )}
             </View>
 
             <View style={styles.documentActions}>
               <TouchableOpacity 
-                style={styles.actionButton}
+                style={[styles.actionButton, { backgroundColor: colors.surface, borderColor: colors.primary }]}
                 onPress={() => handleView(document.name)}
               >
-                <Eye size={16} color="#6A0DAD" />
-                <Text style={styles.actionButtonText}>View</Text>
+                <Eye size={16} color={colors.primary} />
+                <Text style={[styles.actionButtonText, { color: colors.primary }]}>View</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
-                style={styles.actionButton}
+                style={[styles.actionButton, { backgroundColor: colors.surface, borderColor: colors.primary }]}
                 onPress={() => handleDownload(document.name)}
               >
-                <Download size={16} color="#6A0DAD" />
-                <Text style={styles.actionButtonText}>Download</Text>
+                <Download size={16} color={colors.primary} />
+                <Text style={[styles.actionButtonText, { color: colors.primary }]}>Download</Text>
               </TouchableOpacity>
               
               {(document.status === 'expired' || isExpiringSoon(document.expiryDate)) && (
                 <TouchableOpacity 
-                  style={styles.updateButton}
+                  style={[styles.updateButton, { backgroundColor: colors.warning }]}
                   onPress={handleUpload}
                 >
-                  <Upload size={16} color="#000" />
-                  <Text style={styles.updateButtonText}>Update</Text>
+                  <Upload size={16} color="#ffffff" />
+                  <Text style={[styles.updateButtonText, { color: '#ffffff' }]}>Update</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -257,21 +243,21 @@ export default function DocumentsScreen() {
         ))}
 
         {/* Document Requirements */}
-        <View style={styles.requirementsCard}>
-          <Text style={styles.requirementsTitle}>Required Documents</Text>
-          <Text style={styles.requirementsText}>
+        <View style={[styles.requirementsCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.requirementsTitle, { color: colors.text }]}>Required Documents</Text>
+          <Text style={[styles.requirementsText, { color: colors.textSecondary }]}>
             All drivers must maintain current versions of the following documents:
           </Text>
           
           <View style={styles.requirementsList}>
-            <Text style={styles.requirementItem}>• Valid Driver's License</Text>
-            <Text style={styles.requirementItem}>• Vehicle Registration</Text>
-            <Text style={styles.requirementItem}>• Insurance Certificate</Text>
-            <Text style={styles.requirementItem}>• Background Check</Text>
-            <Text style={styles.requirementItem}>• Vehicle Inspection Report</Text>
+            <Text style={[styles.requirementItem, { color: colors.text }]}>• Valid Driver's License</Text>
+            <Text style={[styles.requirementItem, { color: colors.text }]}>• Vehicle Registration</Text>
+            <Text style={[styles.requirementItem, { color: colors.text }]}>• Insurance Certificate</Text>
+            <Text style={[styles.requirementItem, { color: colors.text }]}>• Background Check</Text>
+            <Text style={[styles.requirementItem, { color: colors.text }]}>• Vehicle Inspection Report</Text>
           </View>
           
-          <Text style={styles.requirementsNote}>
+          <Text style={[styles.requirementsNote, { color: colors.textSecondary }]}>
             Documents must be renewed before expiry to maintain active driver status.
           </Text>
         </View>
@@ -283,89 +269,39 @@ export default function DocumentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', 
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   backButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#f8f9fa',
-    marginRight: 12,
-  },
-  logoContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    elevation: 4,
-    shadowColor: '#6A0DAD',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  companyName: {
-    color: '#333',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  notificationButton: {
-    position: 'relative',
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#f8f9fa',
-  },
-  notificationBadge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    backgroundColor: '#FF4444',
+    padding: 10,
     borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  badgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  headerRight: {
+    width: 44,
   },
   titleContainer: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: '#f8f9fa',
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
   pageTitle: {
-    color: '#333',
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 4,
   },
   pageSubtitle: {
-    color: '#666',
     fontSize: 14,
+    fontWeight: '500',
   },
   uploadContainer: {
     paddingHorizontal: 20,
@@ -375,7 +311,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     elevation: 3,
-    shadowColor: '#FFA500',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -387,9 +322,8 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   uploadButtonText: {
-    color: '#000',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginLeft: 8,
   },
   content: {
@@ -397,27 +331,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   documentCard: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
-  },
-  expiredCard: {
-    borderLeftWidth: 4,
-    borderLeftColor: '#FF6B6B',
-    backgroundColor: '#fff5f5',
-  },
-  expiringSoonCard: {
-    borderLeftWidth: 4,
-    borderLeftColor: '#FFA500',
-    backgroundColor: '#fffbf0',
   },
   documentHeader: {
     flexDirection: 'row',
@@ -442,26 +363,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   documentName: {
-    color: '#333',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 4,
   },
   documentSize: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '500',
   },
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 4,
     textTransform: 'uppercase',
   },
@@ -477,49 +396,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dateLabel: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '600',
     marginBottom: 2,
   },
   dateValue: {
-    color: '#333',
     fontSize: 14,
-    fontWeight: '500',
-  },
-  expiringDate: {
-    color: '#FFA500',
-    fontWeight: 'bold',
-  },
-  expiredDate: {
-    color: '#FF6B6B',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   warningBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFA50020',
     padding: 12,
     borderRadius: 8,
     marginTop: 8,
   },
   warningText: {
-    color: '#FFA500',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 8,
   },
   expiredBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FF6B6B20',
     padding: 12,
     borderRadius: 8,
     marginTop: 8,
   },
   expiredText: {
-    color: '#FF6B6B',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 8,
   },
   documentActions: {
@@ -531,16 +437,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#6A0DAD',
   },
   actionButtonText: {
-    color: '#6A0DAD',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 4,
   },
   updateButton: {
@@ -548,33 +451,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFA500',
     paddingVertical: 12,
     borderRadius: 8,
   },
   updateButtonText: {
-    color: '#000',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     marginLeft: 4,
   },
   requirementsCard: {
-    backgroundColor: '#f8f9fa',
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   requirementsTitle: {
-    color: '#333',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 12,
   },
   requirementsText: {
-    color: '#666',
     fontSize: 14,
+    fontWeight: '500',
     lineHeight: 20,
     marginBottom: 16,
   },
@@ -582,13 +480,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   requirementItem: {
-    color: '#333',
     fontSize: 14,
+    fontWeight: '500',
     lineHeight: 24,
   },
   requirementsNote: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '500',
     fontStyle: 'italic',
     lineHeight: 18,
   },

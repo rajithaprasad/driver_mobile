@@ -6,11 +6,12 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 import { MapPin, Clock, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { MapPin, Clock, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { useTheme } from '@/contexts/ThemeContext';
+import Header from '@/components/Header';
 import { useTheme } from '@/contexts/ThemeContext';
 import Header from '@/components/Header';
 
@@ -84,6 +85,7 @@ const scheduledJobs = [
 ];
 
 export default function HomeScreen() {
+  const { colors } = useTheme();
   const { colors } = useTheme();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeTab, setActiveTab] = useState('find');
@@ -184,55 +186,44 @@ export default function HomeScreen() {
           >
             <ChevronLeft size={24} color={currentDateIndex === 0 ? colors.border : colors.primary} />
           </TouchableOpacity>
-          
+            style={[styles.dateNavButton, { backgroundColor: colors.surface }]} 
           <View style={[styles.currentDateContainer, { backgroundColor: colors.surface }]}>
             <Text style={[styles.currentDateText, { color: colors.text }]}>
               {formatDate(selectedDate).month} {formatDate(selectedDate).date}, {formatDate(selectedDate).year}
-            </Text>
+            <ChevronRight size={24} color={currentDateIndex === dates.length - 1 ? colors.border : colors.primary} />
             <Text style={[styles.currentDayText, { color: colors.primary }]}>
               {formatDate(selectedDate).day}
             </Text>
           </View>
           
-          <TouchableOpacity 
+      <View style={[styles.tabContainer, { backgroundColor: colors.surface }]}>
             style={[styles.dateNavButton, { backgroundColor: colors.surface }]} 
-            onPress={() => navigateDate('next')}
+          style={[styles.tab, activeTab === 'find' && { ...styles.activeTab, backgroundColor: colors.background }]}
             disabled={currentDateIndex === dates.length - 1}
           >
-            <ChevronRight size={24} color={currentDateIndex === dates.length - 1 ? colors.border : colors.primary} />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Tab Selector */}
-      <View style={[styles.tabContainer, { backgroundColor: colors.surface }]}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'find' && { ...styles.activeTab, backgroundColor: colors.background }]}
-          onPress={() => setActiveTab('find')}
-        >
           <Text style={[
             styles.tabText, 
             { color: colors.textSecondary },
             activeTab === 'find' && { ...styles.activeTabText, color: colors.primary }
           ]}>
-            Find Jobs ({filteredJobs.length})
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+          </TouchableOpacity>
+        </View>
+      </View>
+
           style={[styles.tab, activeTab === 'schedule' && { ...styles.activeTab, backgroundColor: colors.background }]}
-          onPress={() => setActiveTab('schedule')}
-        >
+      <View style={[styles.tabContainer, { backgroundColor: colors.surface }]}>
+      <View style={[styles.dateScrollerContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
           <Text style={[
             styles.tabText,
             { color: colors.textSecondary },
             activeTab === 'schedule' && { ...styles.activeTabText, color: colors.primary }
           ]}>
-            Schedule ({filteredScheduled.length})
-          </Text>
-        </TouchableOpacity>
-      </View>
+          onPress={() => setActiveTab('find')}
+            style={[styles.dateNavButton, { backgroundColor: colors.surface }]} 
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <Header title="DriveDelivery" />
 
-      {/* Job List */}
+            <ChevronLeft size={24} color={currentDateIndex === 0 ? colors.border : colors.primary} />
       <ScrollView style={styles.jobList} showsVerticalScrollIndicator={false}>
         {(activeTab === 'find' ? filteredJobs : filteredScheduled).length === 0 ? (
           <View style={[styles.emptyState, { backgroundColor: colors.surface }]}>
@@ -262,72 +253,10 @@ export default function HomeScreen() {
                   <View style={styles.locationDetails}>
                     <Text style={[styles.locationLabel, { color: colors.textSecondary }]}>Pickup</Text>
                     <Text style={[styles.locationAddress, { color: colors.text }]}>{job.pickupAddress}</Text>
-                  </View>
-                </View>
-
-                <View style={[styles.routeLine, { backgroundColor: colors.border }]} />
-
-                <View style={styles.locationItem}>
-                  <View style={[styles.locationIcon, { backgroundColor: colors.background }]}>
-                    <MapPin size={16} color={colors.primary} />
-                  </View>
-                  <View style={styles.locationDetails}>
-                    <Text style={[styles.locationLabel, { color: colors.textSecondary }]}>Drop</Text>
-                    <Text style={[styles.locationAddress, { color: colors.text }]}>{job.dropAddress}</Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.jobFooter}>
-                <View style={[styles.timeContainer, { backgroundColor: colors.surface }]}>
-                  <Clock size={16} color={colors.textSecondary} />
-                  <Text style={[styles.timeText, { color: colors.textSecondary }]}>{job.time}</Text>
-                </View>
-                
-                {activeTab === 'find' ? (
-                  <View style={styles.actionButtons}>
-                    <TouchableOpacity 
-                      style={[styles.viewButton, { backgroundColor: colors.surface, borderColor: colors.primary }]}
-                      onPress={() => viewJobDetails(job)}
-                    >
-                      <Text style={[styles.viewButtonText, { color: colors.primary }]}>View</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={styles.acceptButton}
-                      onPress={() => acceptJob(job.id)}
-                    >
-                      <LinearGradient
-                        colors={['#f59e0b', '#d97706']}
-                        style={styles.acceptButtonGradient}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                      >
-                        <Text style={[styles.acceptButtonText, { color: colors.background }]}>Accept</Text>
-                        <ArrowRight size={16} color={colors.background} />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View style={[styles.acceptedBadge, { backgroundColor: colors.success }]}>
-                    <Text style={[styles.acceptedText, { color: colors.background }]}>Accepted</Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          ))
-        )}
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
   dateScrollerContainer: {
     paddingVertical: 20,
-    borderBottomWidth: 1,
   },
   dateNavigationContainer: {
     flexDirection: 'row',
@@ -336,28 +265,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   dateNavButton: {
-    padding: 12,
     borderRadius: 12,
     marginHorizontal: 20,
   },
   currentDateContainer: {
-    alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 16,
     borderRadius: 16,
     minWidth: 200,
   },
   currentDateText: {
-    fontSize: 18,
     fontWeight: '700',
-  },
-  currentDayText: {
+    fontWeight: '700',
     fontSize: 14,
     fontWeight: '700',
     marginTop: 4,
   },
   tabContainer: {
-    flexDirection: 'row',
     margin: 20,
     borderRadius: 16,
     padding: 4,
@@ -369,16 +293,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   activeTab: {
-    elevation: 2,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
     shadowRadius: 4,
   },
   tabText: {
     fontSize: 14,
     fontWeight: '700',
-  },
-  activeTabText: {
     fontWeight: '700',
   },
   jobList: {
@@ -387,25 +307,21 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: 60,
     borderRadius: 16,
     marginTop: 20,
   },
-  emptyStateText: {
     fontSize: 16,
     textAlign: 'center',
     fontWeight: '500',
+    fontWeight: '500',
   },
   jobCard: {
-    borderRadius: 16,
     padding: 20,
     marginBottom: 16,
     elevation: 2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    elevation: 2,
     shadowRadius: 8,
-    borderWidth: 1,
   },
   jobHeader: {
     flexDirection: 'row',
@@ -414,10 +330,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   orderNumber: {
-    fontSize: 14,
     fontWeight: '700',
-  },
-  customerName: {
+    fontWeight: '700',
     fontSize: 18,
     fontWeight: '700',
     marginTop: 4,
@@ -426,16 +340,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   paymentAmount: {
-    fontSize: 20,
     fontWeight: '700',
-  },
-  distance: {
+    fontWeight: '700',
     fontSize: 12,
     marginTop: 2,
     fontWeight: '500',
+    fontWeight: '500',
   },
   locationContainer: {
-    marginBottom: 16,
     padding: 16,
     borderRadius: 12,
   },
@@ -448,51 +360,38 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     elevation: 1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
   locationDetails: {
     flex: 1,
   },
   locationLabel: {
-    fontSize: 12,
     fontWeight: '700',
-    textTransform: 'uppercase',
+    fontWeight: '700',
   },
-  locationAddress: {
     fontSize: 14,
     marginTop: 2,
     fontWeight: '600',
   },
   routeLine: {
     width: 2,
-    height: 16,
     marginLeft: 15,
     marginVertical: 4,
   },
   jobFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: 20,
   },
-  timeText: {
     fontSize: 14,
-    marginLeft: 6,
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  actionButtons: {
+    fontWeight: '600',
     flexDirection: 'row',
     gap: 8,
   },
@@ -509,7 +408,6 @@ const styles = StyleSheet.create({
   acceptButton: {
     borderRadius: 20,
     overflow: 'hidden',
-    elevation: 2,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -521,17 +419,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   acceptButtonText: {
-    fontSize: 14,
     fontWeight: '700',
-    marginRight: 6,
+    fontWeight: '700',
   },
-  acceptedBadge: {
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 16,
   },
   acceptedText: {
-    fontSize: 12,
     fontWeight: '700',
-  },
+    fontWeight: '700',
 });
