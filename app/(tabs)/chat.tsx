@@ -10,9 +10,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { Send, Phone, Video, MoveVertical as MoreVertical, Bell, Truck } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { Send, Phone, Video, MoveVertical as MoreVertical } from 'lucide-react-native';
+import { useTheme } from '@/contexts/ThemeContext';
+import Header from '@/components/Header';
 
 interface Message {
   id: string;
@@ -55,6 +55,7 @@ const mockMessages: Message[] = [
 ];
 
 export default function ChatScreen() {
+  const { colors } = useTheme();
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [inputText, setInputText] = useState('');
 
@@ -83,20 +84,26 @@ export default function ChatScreen() {
     }
   };
 
-  const openNotifications = () => {
-    router.push('/notifications');
-  };
 
   const renderMessage = ({ item }: { item: Message }) => {
     const isUser = item.sender === 'user';
     
     return (
       <View style={[styles.messageContainer, isUser ? styles.userMessage : styles.supportMessage]}>
-        <View style={[styles.messageBubble, isUser ? styles.userBubble : styles.supportBubble]}>
-          <Text style={[styles.messageText, isUser ? styles.userText : styles.supportText]}>
+        <View style={[
+          styles.messageBubble, 
+          isUser ? { backgroundColor: colors.primary } : { backgroundColor: colors.card, borderColor: colors.border }
+        ]}>
+          <Text style={[
+            styles.messageText, 
+            { color: isUser ? '#ffffff' : colors.text }
+          ]}>
             {item.text}
           </Text>
-          <Text style={[styles.timestamp, isUser ? styles.userTimestamp : styles.supportTimestamp]}>
+          <Text style={[
+            styles.timestamp, 
+            { color: isUser ? '#ffffff' : colors.textSecondary, opacity: isUser ? 0.8 : 1 }
+          ]}>
             {item.timestamp}
           </Text>
         </View>
@@ -105,49 +112,30 @@ export default function ChatScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <LinearGradient
-            colors={['#6A0DAD', '#8A2BE2']}
-            style={styles.logoContainer}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <Truck size={24} color="#fff" />
-          </LinearGradient>
-          <Text style={styles.companyName}>DriveDelivery</Text>
-        </View>
-        <TouchableOpacity style={styles.notificationButton} onPress={openNotifications}>
-          <Bell size={24} color="#6A0DAD" />
-          <View style={styles.notificationBadge}>
-            <Text style={styles.badgeText}>3</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <Header title="Support Chat" />
 
       {/* Chat Header */}
-      <View style={styles.chatHeader}>
+      <View style={[styles.chatHeader, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <View style={styles.chatHeaderLeft}>
-          <View style={styles.avatarContainer}>
+          <View style={[styles.avatarContainer, { backgroundColor: colors.primary }]}>
             <Text style={styles.avatarText}>CS</Text>
           </View>
           <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle}>Customer Support</Text>
-            <Text style={styles.headerSubtitle}>Online now</Text>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>Customer Support</Text>
+            <Text style={[styles.headerSubtitle, { color: colors.success }]}>Online now</Text>
           </View>
         </View>
         
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.headerButton}>
-            <Phone size={20} color="#6A0DAD" />
+          <TouchableOpacity style={[styles.headerButton, { backgroundColor: colors.background }]}>
+            <Phone size={20} color={colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerButton}>
-            <Video size={20} color="#6A0DAD" />
+          <TouchableOpacity style={[styles.headerButton, { backgroundColor: colors.background }]}>
+            <Video size={20} color={colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerButton}>
-            <MoreVertical size={20} color="#6A0DAD" />
+          <TouchableOpacity style={[styles.headerButton, { backgroundColor: colors.background }]}>
+            <MoreVertical size={20} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -157,7 +145,7 @@ export default function ChatScreen() {
         data={messages}
         renderItem={renderMessage}
         keyExtractor={(item) => item.id}
-        style={styles.messagesList}
+        style={[styles.messagesList, { backgroundColor: colors.surface }]}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.messagesContent}
       />
@@ -165,24 +153,28 @@ export default function ChatScreen() {
       {/* Input Area */}
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.inputContainer}
+        style={[styles.inputContainer, { borderTopColor: colors.border, backgroundColor: colors.background }]}
       >
         <View style={styles.inputWrapper}>
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput, { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text }]}
             placeholder="Type a message..."
-            placeholderTextColor="#666"
+            placeholderTextColor={colors.textSecondary}
             value={inputText}
             onChangeText={setInputText}
             multiline
             maxLength={500}
           />
           <TouchableOpacity 
-            style={[styles.sendButton, inputText.trim() ? styles.sendButtonActive : null]}
+            style={[
+              styles.sendButton, 
+              { backgroundColor: colors.surface },
+              inputText.trim() ? { backgroundColor: colors.primary } : null
+            ]}
             onPress={sendMessage}
             disabled={!inputText.trim()}
           >
-            <Send size={20} color={inputText.trim() ? '#fff' : '#666'} />
+            <Send size={20} color={inputText.trim() ? '#fff' : colors.textSecondary} />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -193,66 +185,6 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    elevation: 4,
-    shadowColor: '#6A0DAD',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  companyName: {
-    color: '#333',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  notificationButton: {
-    position: 'relative',
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#f8f9fa',
-  },
-  notificationBadge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    backgroundColor: '#FF4444',
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
   },
   chatHeader: {
     flexDirection: 'row',
@@ -260,9 +192,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#f8f9fa',
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
   chatHeaderLeft: {
     flexDirection: 'row',
@@ -273,7 +203,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#6A0DAD',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -281,19 +210,18 @@ const styles = StyleSheet.create({
   avatarText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   headerInfo: {
     flex: 1,
   },
   headerTitle: {
-    color: '#333',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   headerSubtitle: {
-    color: '#4ADE80',
     fontSize: 12,
+    fontWeight: '600',
     marginTop: 2,
   },
   headerActions: {
@@ -303,11 +231,9 @@ const styles = StyleSheet.create({
   headerButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: '#fff',
   },
   messagesList: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
   },
   messagesContent: {
     padding: 20,
@@ -326,48 +252,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 16,
-  },
-  userBubble: {
-    backgroundColor: '#6A0DAD',
     borderBottomRightRadius: 4,
-  },
-  supportBubble: {
-    backgroundColor: '#fff',
     borderBottomLeftRadius: 4,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
     elevation: 1,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
   },
   messageText: {
     fontSize: 14,
+    fontWeight: '500',
     lineHeight: 20,
-  },
-  userText: {
-    color: '#fff',
-  },
-  supportText: {
-    color: '#333',
   },
   timestamp: {
     fontSize: 10,
+    fontWeight: '600',
     marginTop: 4,
-  },
-  userTimestamp: {
-    color: '#fff',
-    opacity: 0.7,
     textAlign: 'right',
-  },
-  supportTimestamp: {
-    color: '#666',
   },
   inputContainer: {
     borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    backgroundColor: '#fff',
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -377,25 +282,19 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: '#333',
     fontSize: 14,
+    fontWeight: '500',
     maxHeight: 100,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   sendButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  sendButtonActive: {
-    backgroundColor: '#6A0DAD',
   },
 });

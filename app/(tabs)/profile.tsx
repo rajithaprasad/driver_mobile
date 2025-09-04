@@ -6,11 +6,10 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
-  Alert,
 } from 'react-native';
-import { User, Settings, Bell, Shield, CircleHelp as HelpCircle, LogOut, FileText, Phone, Mail, MapPin, Star, Calendar, TrendingUp, Package, Clock, ChevronLeft, ChevronRight, Truck } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { Phone, Mail, MapPin, Star, Calendar, TrendingUp, Package, Clock, ChevronLeft, ChevronRight, Edit } from 'lucide-react-native';
+import { useTheme } from '@/contexts/ThemeContext';
+import Header from '@/components/Header';
 
 // Mock orders data with different dates
 const mockOrders = [
@@ -57,6 +56,7 @@ const mockOrders = [
 ];
 
 export default function ProfileScreen() {
+  const { colors } = useTheme();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentDateIndex, setCurrentDateIndex] = useState(0);
 
@@ -106,127 +106,84 @@ export default function ProfileScreen() {
   // Filter orders by selected date
   const ordersForDate = mockOrders.filter(order => order.date === selectedDate.toDateString());
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', style: 'destructive', onPress: () => {
-          router.replace('/login');
-        }}
-      ]
-    );
-  };
-
-  const handleDocuments = () => {
-    router.push('/documents');
-  };
-
-  const handleSettings = () => {
-    Alert.alert('Settings', 'Settings screen would be implemented here.');
-  };
-
-  const handleSupport = () => {
-    Alert.alert('Support', 'Support functionality would be implemented here.');
-  };
-
-  const openNotifications = () => {
-    router.push('/notifications');
-  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <LinearGradient
-            colors={['#6A0DAD', '#8A2BE2']}
-            style={styles.logoContainer}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <Truck size={24} color="#fff" />
-          </LinearGradient>
-          <Text style={styles.companyName}>DriveDelivery</Text>
-        </View>
-        <TouchableOpacity style={styles.notificationButton} onPress={openNotifications}>
-          <Bell size={24} color="#6A0DAD" />
-          <View style={styles.notificationBadge}>
-            <Text style={styles.badgeText}>3</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <Header title="Profile" />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Profile Card */}
-        <View style={styles.profileCard}>
+        <View style={[styles.profileCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.avatarContainer}>
-            <Text style={styles.avatarText}>JD</Text>
-            <View style={styles.onlineIndicator} />
+            <Text style={[styles.avatarText, { backgroundColor: colors.primary }]}>JD</Text>
+            <View style={[styles.onlineIndicator, { backgroundColor: colors.success }]} />
           </View>
           
           <View style={styles.profileInfo}>
-            <Text style={styles.driverName}>John Driver</Text>
-            <Text style={styles.driverEmail}>john.driver@email.com</Text>
+            <Text style={[styles.driverName, { color: colors.text }]}>John Driver</Text>
+            <Text style={[styles.driverEmail, { color: colors.textSecondary }]}>john.driver@email.com</Text>
             <View style={styles.ratingContainer}>
-              <Star size={16} color="#FFA500" fill="#FFA500" />
-              <Text style={styles.rating}>4.9</Text>
-              <Text style={styles.ratingText}>(127 reviews)</Text>
+              <Star size={16} color={colors.accent} fill={colors.accent} />
+              <Text style={[styles.rating, { color: colors.accent }]}>4.9</Text>
+              <Text style={[styles.ratingText, { color: colors.textSecondary }]}>(127 reviews)</Text>
             </View>
           </View>
+          
+          <TouchableOpacity style={[styles.editButton, { backgroundColor: colors.surface }]}>
+            <Edit size={16} color={colors.primary} />
+          </TouchableOpacity>
         </View>
 
         {/* Stats */}
         <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Calendar size={20} color="#6A0DAD" />
-            <Text style={styles.statNumber}>45</Text>
-            <Text style={styles.statLabel}>Days Active</Text>
+          <View style={[styles.statItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Calendar size={20} color={colors.primary} />
+            <Text style={[styles.statNumber, { color: colors.text }]}>45</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Days Active</Text>
           </View>
           
-          <View style={styles.statItem}>
-            <TrendingUp size={20} color="#4ADE80" />
-            <Text style={styles.statNumber}>342</Text>
-            <Text style={styles.statLabel}>Deliveries</Text>
+          <View style={[styles.statItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <TrendingUp size={20} color={colors.success} />
+            <Text style={[styles.statNumber, { color: colors.text }]}>342</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Deliveries</Text>
           </View>
           
-          <View style={styles.statItem}>
-            <Star size={20} color="#FFA500" />
-            <Text style={styles.statNumber}>4.9</Text>
-            <Text style={styles.statLabel}>Rating</Text>
+          <View style={[styles.statItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Star size={20} color={colors.accent} />
+            <Text style={[styles.statNumber, { color: colors.text }]}>4.9</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Rating</Text>
           </View>
         </View>
 
         {/* Date Scroller for Orders */}
         <View style={styles.ordersSection}>
-          <Text style={styles.sectionTitle}>Orders History</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Orders History</Text>
           
-          <View style={styles.dateScrollerContainer}>
+          <View style={[styles.dateScrollerContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.dateNavigationContainer}>
               <TouchableOpacity 
-                style={styles.dateNavButton} 
+                style={[styles.dateNavButton, { backgroundColor: colors.surface }]} 
                 onPress={() => navigateDate('prev')}
                 disabled={currentDateIndex === 0}
               >
-                <ChevronLeft size={20} color={currentDateIndex === 0 ? "#ccc" : "#6A0DAD"} />
+                <ChevronLeft size={20} color={currentDateIndex === 0 ? colors.border : colors.primary} />
               </TouchableOpacity>
               
-              <View style={styles.currentDateContainer}>
-                <Text style={styles.currentDateText}>
+              <View style={[styles.currentDateContainer, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.currentDateText, { color: colors.text }]}>
                   {formatDate(selectedDate).month} {formatDate(selectedDate).date}, {formatDate(selectedDate).year}
                 </Text>
-                <Text style={styles.currentDayText}>
+                <Text style={[styles.currentDayText, { color: colors.primary }]}>
                   {formatDate(selectedDate).day}
                 </Text>
               </View>
               
               <TouchableOpacity 
-                style={styles.dateNavButton} 
+                style={[styles.dateNavButton, { backgroundColor: colors.surface }]} 
                 onPress={() => navigateDate('next')}
                 disabled={currentDateIndex === dates.length - 1}
               >
-                <ChevronRight size={20} color={currentDateIndex === dates.length - 1 ? "#ccc" : "#6A0DAD"} />
+                <ChevronRight size={20} color={currentDateIndex === dates.length - 1 ? colors.border : colors.primary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -234,37 +191,37 @@ export default function ProfileScreen() {
           {/* Orders for Selected Date */}
           <View style={styles.ordersContainer}>
             {ordersForDate.length === 0 ? (
-              <View style={styles.emptyOrders}>
-                <Package size={40} color="#ccc" />
-                <Text style={styles.emptyOrdersText}>No orders for this date</Text>
+              <View style={[styles.emptyOrders, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <Package size={40} color={colors.border} />
+                <Text style={[styles.emptyOrdersText, { color: colors.textSecondary }]}>No orders for this date</Text>
               </View>
             ) : (
               ordersForDate.map((order) => (
-                <View key={order.id} style={styles.orderCard}>
+                <View key={order.id} style={[styles.orderCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <View style={styles.orderHeader}>
                     <View>
-                      <Text style={styles.orderNumber}>{order.orderNumber}</Text>
-                      <Text style={styles.orderCustomer}>{order.customer}</Text>
+                      <Text style={[styles.orderNumber, { color: colors.accent }]}>{order.orderNumber}</Text>
+                      <Text style={[styles.orderCustomer, { color: colors.text }]}>{order.customer}</Text>
                     </View>
                     <View style={styles.orderRight}>
-                      <Text style={styles.orderPayment}>{order.payment}</Text>
+                      <Text style={[styles.orderPayment, { color: colors.success }]}>{order.payment}</Text>
                       <View style={[
                         styles.statusBadge,
-                        { backgroundColor: order.status === 'completed' ? '#4ADE80' : '#FFA500' }
+                        { backgroundColor: order.status === 'completed' ? colors.success : colors.warning }
                       ]}>
-                        <Text style={styles.statusText}>{order.status}</Text>
+                        <Text style={[styles.statusText, { color: colors.background }]}>{order.status}</Text>
                       </View>
                     </View>
                   </View>
                   
                   <View style={styles.orderDetails}>
                     <View style={styles.orderDetailItem}>
-                      <Clock size={14} color="#666" />
-                      <Text style={styles.orderDetailText}>{order.time}</Text>
+                      <Clock size={14} color={colors.textSecondary} />
+                      <Text style={[styles.orderDetailText, { color: colors.textSecondary }]}>{order.time}</Text>
                     </View>
                     <View style={styles.orderDetailItem}>
-                      <Package size={14} color="#666" />
-                      <Text style={styles.orderDetailText}>{order.goods}</Text>
+                      <Package size={14} color={colors.textSecondary} />
+                      <Text style={[styles.orderDetailText, { color: colors.textSecondary }]}>{order.goods}</Text>
                     </View>
                   </View>
                 </View>
@@ -275,87 +232,36 @@ export default function ProfileScreen() {
 
         {/* Contact Information */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact Information</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Contact Information</Text>
           
-          <View style={styles.infoItem}>
-            <Phone size={20} color="#666" />
+          <View style={[styles.infoItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Phone size={20} color={colors.textSecondary} />
             <View style={styles.infoText}>
-              <Text style={styles.infoLabel}>Phone</Text>
-              <Text style={styles.infoValue}>+1 (555) 123-4567</Text>
+              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Phone</Text>
+              <Text style={[styles.infoValue, { color: colors.text }]}>+1 (555) 123-4567</Text>
             </View>
           </View>
           
-          <View style={styles.infoItem}>
-            <Mail size={20} color="#666" />
+          <View style={[styles.infoItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Mail size={20} color={colors.textSecondary} />
             <View style={styles.infoText}>
-              <Text style={styles.infoLabel}>Email</Text>
-              <Text style={styles.infoValue}>john.driver@email.com</Text>
+              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Email</Text>
+              <Text style={[styles.infoValue, { color: colors.text }]}>john.driver@email.com</Text>
             </View>
           </View>
           
-          <View style={styles.infoItem}>
-            <MapPin size={20} color="#666" />
+          <View style={[styles.infoItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <MapPin size={20} color={colors.textSecondary} />
             <View style={styles.infoText}>
-              <Text style={styles.infoLabel}>Location</Text>
-              <Text style={styles.infoValue}>New York, NY</Text>
+              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Location</Text>
+              <Text style={[styles.infoValue, { color: colors.text }]}>New York, NY</Text>
             </View>
           </View>
         </View>
 
-        {/* Menu Items */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Menu</Text>
-          
-          <TouchableOpacity style={styles.menuItem} onPress={handleDocuments}>
-            <View style={styles.menuLeft}>
-              <FileText size={20} color="#6A0DAD" />
-              <Text style={styles.menuText}>Document Management</Text>
-            </View>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem} onPress={handleSettings}>
-            <View style={styles.menuLeft}>
-              <Settings size={20} color="#666" />
-              <Text style={styles.menuText}>Settings</Text>
-            </View>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuLeft}>
-              <Bell size={20} color="#666" />
-              <Text style={styles.menuText}>Notifications</Text>
-            </View>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuLeft}>
-              <Shield size={20} color="#666" />
-              <Text style={styles.menuText}>Privacy & Security</Text>
-            </View>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem} onPress={handleSupport}>
-            <View style={styles.menuLeft}>
-              <HelpCircle size={20} color="#666" />
-              <Text style={styles.menuText}>Help & Support</Text>
-            </View>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <LogOut size={20} color="#FF6B6B" />
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>DriveDelivery v1.0.0</Text>
-          <Text style={styles.footerText}>© 2024 DriveDelivery Inc.</Text>
+        <View style={[styles.footer, { borderTopColor: colors.border }]}>
+          <Text style={[styles.footerText, { color: colors.textSecondary }]}>DriveDelivery v1.0.0</Text>
+          <Text style={[styles.footerText, { color: colors.textSecondary }]}>© 2024 DriveDelivery Inc.</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -365,66 +271,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    elevation: 4,
-    shadowColor: '#6A0DAD',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  companyName: {
-    color: '#333',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  notificationButton: {
-    position: 'relative',
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#f8f9fa',
-  },
-  notificationBadge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    backgroundColor: '#FF4444',
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
   },
   content: {
     flex: 1,
@@ -432,17 +278,14 @@ const styles = StyleSheet.create({
   profileCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     margin: 20,
     padding: 20,
     borderRadius: 16,
     elevation: 3,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   avatarContainer: {
     position: 'relative',
@@ -452,10 +295,9 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#6A0DAD',
     color: '#fff',
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '700',
     textAlign: 'center',
     lineHeight: 60,
   },
@@ -466,7 +308,6 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: '#4ADE80',
     borderWidth: 2,
     borderColor: '#fff',
   },
@@ -474,14 +315,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   driverName: {
-    color: '#333',
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 4,
   },
   driverEmail: {
-    color: '#666',
     fontSize: 14,
+    fontWeight: '500',
     marginBottom: 8,
   },
   ratingContainer: {
@@ -489,15 +329,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rating: {
-    color: '#FFA500',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginLeft: 4,
   },
   ratingText: {
-    color: '#666',
     fontSize: 14,
+    fontWeight: '500',
     marginLeft: 8,
+  },
+  editButton: {
+    padding: 10,
+    borderRadius: 10,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -507,28 +350,24 @@ const styles = StyleSheet.create({
   },
   statItem: {
     flex: 1,
-    backgroundColor: '#fff',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   statNumber: {
-    color: '#333',
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginTop: 8,
     marginBottom: 4,
   },
   statLabel: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '600',
     textAlign: 'center',
   },
   ordersSection: {
@@ -536,17 +375,14 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   dateScrollerContainer: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   dateNavigationContainer: {
     flexDirection: 'row',
@@ -556,26 +392,22 @@ const styles = StyleSheet.create({
   dateNavButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: '#f8f9fa',
     marginHorizontal: 20,
   },
   currentDateContainer: {
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 12,
     minWidth: 180,
   },
   currentDateText: {
-    color: '#333',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   currentDayText: {
-    color: '#6A0DAD',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     marginTop: 2,
   },
   ordersContainer: {
@@ -585,27 +417,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 40,
-    backgroundColor: '#f8f9fa',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   emptyOrdersText: {
-    color: '#666',
     fontSize: 14,
+    fontWeight: '500',
     marginTop: 8,
   },
   orderCard: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   orderHeader: {
     flexDirection: 'row',
@@ -614,23 +441,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   orderNumber: {
-    color: '#FFA500',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   orderCustomer: {
-    color: '#333',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     marginTop: 2,
   },
   orderRight: {
     alignItems: 'flex-end',
   },
   orderPayment: {
-    color: '#4ADE80',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 4,
   },
   statusBadge: {
@@ -639,9 +463,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   statusText: {
-    color: '#000',
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     textTransform: 'uppercase',
   },
   orderDetails: {
@@ -653,8 +476,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   orderDetailText: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '500',
     marginLeft: 4,
   },
   section: {
@@ -662,99 +485,44 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#333',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 16,
   },
   infoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   infoText: {
     marginLeft: 12,
     flex: 1,
   },
   infoLabel: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '600',
     marginBottom: 2,
   },
   infoValue: {
-    color: '#333',
     fontSize: 14,
-    fontWeight: '500',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 8,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
-  },
-  menuLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  menuText: {
-    color: '#333',
-    fontSize: 16,
-    marginLeft: 12,
-    fontWeight: '500',
-  },
-  menuArrow: {
-    color: '#666',
-    fontSize: 20,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#FF6B6B',
-    margin: 20,
-    paddingVertical: 16,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  logoutText: {
-    color: '#FF6B6B',
-    fontSize: 16,
     fontWeight: '600',
-    marginLeft: 8,
   },
   footer: {
     alignItems: 'center',
     paddingVertical: 20,
+    borderTopWidth: 1,
+    marginTop: 20,
   },
   footerText: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '500',
     marginBottom: 4,
   },
 });

@@ -13,8 +13,10 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, Lock, Truck } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function LoginScreen() {
+  const { colors } = useTheme();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -44,8 +46,11 @@ export default function LoginScreen() {
     setPassword('demo123');
   };
 
+  const handleForgotPassword = () => {
+    router.push('/forgot-password');
+  };
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardContainer}
@@ -54,27 +59,27 @@ export default function LoginScreen() {
           {/* Header */}
           <View style={styles.header}>
             <LinearGradient
-              colors={['#6A0DAD', '#8A2BE2']}
+              colors={['#6366f1', '#8b5cf6']}
               style={styles.logoContainer}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <Truck size={40} color="#fff" />
+              <Text style={styles.logoText}>DD</Text>
             </LinearGradient>
-            <Text style={styles.title}>DriveDelivery</Text>
-            <Text style={styles.subtitle}>Driver Portal</Text>
+            <Text style={[styles.title, { color: colors.text }]}>DriveDelivery</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Professional Driver Portal</Text>
           </View>
 
           {/* Login Form */}
           <View style={styles.form}>
-            <View style={styles.inputContainer}>
+            <View style={[styles.inputContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <View style={styles.inputIcon}>
-                <User size={20} color="#666" />
+                <User size={20} color={colors.textSecondary} />
               </View>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text }]}
                 placeholder="Username"
-                placeholderTextColor="#666"
+                placeholderTextColor={colors.textSecondary}
                 value={username}
                 onChangeText={setUsername}
                 autoCapitalize="none"
@@ -82,14 +87,14 @@ export default function LoginScreen() {
               />
             </View>
 
-            <View style={styles.inputContainer}>
+            <View style={[styles.inputContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <View style={styles.inputIcon}>
-                <Lock size={20} color="#666" />
+                <Lock size={20} color={colors.textSecondary} />
               </View>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text }]}
                 placeholder="Password"
-                placeholderTextColor="#666"
+                placeholderTextColor={colors.textSecondary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -104,29 +109,34 @@ export default function LoginScreen() {
               disabled={isLoading}
             >
               <LinearGradient
-                colors={['#FFA500', '#FF8C00']}
+                colors={['#f59e0b', '#d97706']}
                 style={styles.loginButtonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-                <Text style={styles.loginButtonText}>
+                <Text style={[styles.loginButtonText, { color: colors.background }]}>
                   {isLoading ? 'Signing In...' : 'Sign In'}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
 
+            <View style={styles.linkContainer}>
+              <TouchableOpacity onPress={handleForgotPassword}>
+                <Text style={[styles.linkText, { color: colors.primary }]}>Forgot Password?</Text>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity 
               style={styles.demoButton} 
               onPress={fillDemoCredentials}
             >
-              <Text style={styles.demoButtonText}>Use Demo Credentials</Text>
+              <Text style={[styles.demoButtonText, { color: colors.textSecondary }]}>Use Demo Credentials</Text>
             </TouchableOpacity>
           </View>
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>© 2024 DriveDelivery Inc.</Text>
-            <Text style={styles.footerSubtext}>Secure Driver Authentication</Text>
+            <Text style={[styles.footerText, { color: colors.textSecondary }]}>© 2024 DriveDelivery Inc.</Text>
+            <Text style={[styles.footerSubtext, { color: colors.textSecondary }]}>Secure Driver Authentication</Text>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -137,7 +147,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   keyboardContainer: {
     flex: 1,
@@ -159,21 +168,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
     elevation: 8,
-    shadowColor: '#6A0DAD',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
   },
+  logoText: {
+    color: '#fff',
+    fontSize: 36,
+    fontWeight: '800',
+  },
   title: {
-    color: '#333',
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: '800',
     marginBottom: 8,
   },
   subtitle: {
-    color: '#666',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   form: {
     marginBottom: 48,
@@ -181,11 +192,9 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     borderRadius: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
     paddingHorizontal: 16,
     height: 56,
   },
@@ -194,17 +203,14 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: '#333',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   loginButton: {
     marginTop: 24,
-    marginBottom: 16,
     borderRadius: 16,
     overflow: 'hidden',
     elevation: 4,
-    shadowColor: '#FFA500',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -214,30 +220,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loginButtonText: {
-    color: '#000',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
+  },
+  linkContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  linkText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   demoButton: {
     alignItems: 'center',
     paddingVertical: 12,
   },
   demoButtonText: {
-    color: '#6A0DAD',
     fontSize: 14,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
+    fontWeight: '500',
   },
   footer: {
     alignItems: 'center',
   },
   footerText: {
-    color: '#666',
     fontSize: 12,
+    fontWeight: '500',
     marginBottom: 4,
   },
   footerSubtext: {
-    color: '#999',
     fontSize: 10,
+    fontWeight: '500',
   },
 });
