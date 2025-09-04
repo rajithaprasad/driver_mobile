@@ -6,23 +6,31 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
-  Switch,
   Alert,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
-import { ArrowLeft, Bell, MapPin, Volume2, Smartphone, Globe, Database } from 'lucide-react-native';
+import { ArrowLeft, Camera, Lock, User } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SettingsScreen() {
   const { colors } = useTheme();
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [locationServices, setLocationServices] = useState(true);
-  const [soundEffects, setSoundEffects] = useState(true);
-  const [autoAccept, setAutoAccept] = useState(false);
 
-  const handleSave = () => {
-    Alert.alert('Settings Saved', 'Your preferences have been updated successfully.');
+  const handleChangePhoto = () => {
+    Alert.alert(
+      'Change Profile Photo',
+      'Choose an option',
+      [
+        { text: 'Camera', onPress: () => Alert.alert('Camera', 'Camera functionality would be implemented here') },
+        { text: 'Gallery', onPress: () => Alert.alert('Gallery', 'Gallery selection would be implemented here') },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleChangePassword = () => {
+    Alert.alert('Change Password', 'Password change functionality would be implemented here');
   };
 
   return (
@@ -36,133 +44,51 @@ export default function SettingsScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Notifications Section */}
+        {/* Profile Photo Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Notifications</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Profile</Text>
           
-          <View style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.settingLeft}>
-              <Bell size={20} color={colors.primary} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>Push Notifications</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  Receive notifications for new jobs and updates
-                </Text>
-              </View>
-            </View>
-            <Switch
-              value={pushNotifications}
-              onValueChange={setPushNotifications}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={pushNotifications ? '#ffffff' : colors.textSecondary}
-            />
-          </View>
-
-          <View style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.settingLeft}>
-              <Volume2 size={20} color={colors.primary} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>Sound Effects</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  Play sounds for notifications and actions
-                </Text>
-              </View>
-            </View>
-            <Switch
-              value={soundEffects}
-              onValueChange={setSoundEffects}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={soundEffects ? '#ffffff' : colors.textSecondary}
-            />
-          </View>
-        </View>
-
-        {/* Location Section */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Location & Privacy</Text>
-          
-          <View style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.settingLeft}>
-              <MapPin size={20} color={colors.primary} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>Location Services</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  Allow app to access your location for job matching
-                </Text>
-              </View>
-            </View>
-            <Switch
-              value={locationServices}
-              onValueChange={setLocationServices}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={locationServices ? '#ffffff' : colors.textSecondary}
-            />
-          </View>
-        </View>
-
-        {/* Job Preferences */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Job Preferences</Text>
-          
-          <View style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.settingLeft}>
-              <Smartphone size={20} color={colors.primary} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>Auto-Accept Jobs</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  Automatically accept jobs that match your preferences
-                </Text>
-              </View>
-            </View>
-            <Switch
-              value={autoAccept}
-              onValueChange={setAutoAccept}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={autoAccept ? '#ffffff' : colors.textSecondary}
-            />
-          </View>
-        </View>
-
-        {/* App Preferences */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>App Preferences</Text>
-          
-          <TouchableOpacity style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.settingLeft}>
-              <Globe size={20} color={colors.primary} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>Language</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>English (US)</Text>
-              </View>
-            </View>
-            <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={styles.settingLeft}>
-              <Database size={20} color={colors.primary} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>Data Usage</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  Manage offline data and sync preferences
-                </Text>
-              </View>
-            </View>
-            <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Save Button */}
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <LinearGradient
-            colors={['#f59e0b', '#d97706']}
-            style={styles.saveButtonGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+          <TouchableOpacity 
+            style={[styles.photoContainer, { backgroundColor: colors.card, borderColor: colors.border }]}
+            onPress={handleChangePhoto}
           >
-            <Text style={styles.saveButtonText}>Save Changes</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            <View style={styles.photoLeft}>
+              <View style={[styles.currentPhoto, { backgroundColor: colors.primary }]}>
+                <Text style={styles.photoInitials}>JD</Text>
+              </View>
+              <View style={styles.photoInfo}>
+                <Text style={[styles.photoTitle, { color: colors.text }]}>Profile Photo</Text>
+                <Text style={[styles.photoDescription, { color: colors.textSecondary }]}>
+                  Update your profile picture
+                </Text>
+              </View>
+            </View>
+            <View style={[styles.cameraButton, { backgroundColor: colors.surface }]}>
+              <Camera size={20} color={colors.primary} />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Security Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Security</Text>
+          
+          <TouchableOpacity 
+            style={[styles.settingItem, { backgroundColor: colors.card, borderColor: colors.border }]}
+            onPress={handleChangePassword}
+          >
+            <View style={styles.settingLeft}>
+              <Lock size={20} color={colors.primary} />
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingTitle, { color: colors.text }]}>Change Password</Text>
+                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
+                  Update your account password
+                </Text>
+              </View>
+            </View>
+            <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -204,6 +130,53 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 16,
   },
+  photoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    elevation: 1,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  photoLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  currentPhoto: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  photoInitials: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  photoInfo: {
+    flex: 1,
+  },
+  photoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  photoDescription: {
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+  },
+  cameraButton: {
+    padding: 12,
+    borderRadius: 12,
+  },
   settingItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -239,24 +212,5 @@ const styles = StyleSheet.create({
   settingArrow: {
     fontSize: 20,
     fontWeight: '300',
-  },
-  saveButton: {
-    marginTop: 20,
-    marginBottom: 40,
-    borderRadius: 16,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  saveButtonGradient: {
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
   },
 });
