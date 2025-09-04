@@ -12,6 +12,7 @@ import {
 import { router } from 'expo-router';
 import { ArrowLeft, Bell, MapPin, Volume2, Smartphone, Globe, Database } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SettingsScreen() {
   const { colors } = useTheme();
