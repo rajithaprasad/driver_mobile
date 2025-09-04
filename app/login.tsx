@@ -241,17 +241,14 @@ const styles = StyleSheet.create({
   demoButton: {
     alignItems: 'center',
     paddingVertical: 12,
-  }
-  demoButton: {
-    alignItems: 'center',
-    paddingVertical: 12,
   },
   demoButtonText: {
     fontSize: 14,
     fontWeight: '500',
   },
   footer: {
-  }
+    alignItems: 'center',
+  },
   footerText: {
     fontSize: 12,
     fontWeight: '500',
