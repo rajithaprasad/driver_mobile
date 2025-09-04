@@ -9,6 +9,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
 import { ArrowLeft, Lock, Eye, EyeOff } from 'lucide-react-native';
