@@ -35,6 +35,9 @@ const mockJobs = [
     priority: 'high',
     date: new Date().toDateString(),
     status: 'available',
+    vanType: 'small',
+    items: 'Electronics Package, Documents, Small Boxes',
+    helperNeeded: true,
   },
   {
     id: '2',
@@ -52,6 +55,9 @@ const mockJobs = [
     priority: 'normal',
     date: new Date().toDateString(),
     status: 'available',
+    vanType: 'small',
+    items: 'Food Containers, Beverages',
+    helperNeeded: false,
   },
   {
     id: '3',
@@ -69,6 +75,9 @@ const mockJobs = [
     priority: 'urgent',
     date: new Date().toDateString(),
     status: 'scheduled',
+    vanType: 'medium',
+    items: 'Piano, Large Furniture, Boxes',
+    helperNeeded: true,
   },
   {
     id: '4',
@@ -86,6 +95,9 @@ const mockJobs = [
     priority: 'normal',
     date: new Date().toDateString(),
     status: 'completed',
+    vanType: 'small',
+    items: 'Clothing Bags, Shoes',
+    helperNeeded: false,
   },
 ];
 
@@ -184,11 +196,15 @@ export default function HomeScreen() {
         pickupAddress: job.pickupAddress,
         dropAddress: job.dropAddress,
         time: job.time,
+        date: job.date,
         distance: job.distance,
         payment: job.payment,
         goods: job.goods,
         notes: job.notes,
         status: job.status,
+        vanType: job.vanType || 'small',
+        items: job.items || 'Electronics Package, Documents, Small Boxes',
+        helperNeeded: (job.helperNeeded || false).toString(),
       },
     });
   };

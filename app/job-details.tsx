@@ -12,8 +12,9 @@ import {
   Linking,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, MapPin, Clock, User, Phone, Star, Navigation, Package } from 'lucide-react-native';
+import { ArrowLeft, MapPin, Clock, User, Phone, Star, Navigation, Package, Truck, Users, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import MapView, { Marker } from 'react-native-maps';
 import { useTheme } from '@/contexts/ThemeContext';
 
 export default function JobDetailsScreen() {
@@ -28,12 +29,46 @@ export default function JobDetailsScreen() {
     pickupAddress: params.pickupAddress as string,
     dropAddress: params.dropAddress as string,
     time: params.time as string,
+    date: params.date as string || new Date().toDateString(),
     distance: params.distance as string,
     payment: params.payment as string,
     goods: params.goods as string,
     customerRating: parseFloat(params.customerRating as string),
     notes: params.notes as string,
     status: params.status as string,
+    vanType: params.vanType as string || 'small',
+    items: params.items as string || 'Electronics Package, Documents, Small Boxes',
+    helperNeeded: params.helperNeeded === 'true' || false,
+  };
+
+  // Mock coordinates for demonstration
+  const pickupCoords = { latitude: 40.7128, longitude: -74.0060 };
+  const dropCoords = { latitude: 40.7589, longitude: -73.9851 };
+
+  const getVanImage = (vanType: string) => {
+    switch (vanType) {
+      case 'small':
+        return 'https://images.pexels.com/photos/1112597/pexels-photo-1112597.jpeg?auto=compress&cs=tinysrgb&w=300&h=200';
+      case 'medium':
+        return 'https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&cs=tinysrgb&w=300&h=200';
+      case 'large':
+        return 'https://images.pexels.com/photos/1112599/pexels-photo-1112599.jpeg?auto=compress&cs=tinysrgb&w=300&h=200';
+      default:
+        return 'https://images.pexels.com/photos/1112597/pexels-photo-1112597.jpeg?auto=compress&cs=tinysrgb&w=300&h=200';
+    }
+  };
+
+  const getVanTypeLabel = (vanType: string) => {
+    switch (vanType) {
+      case 'small':
+        return 'Small Van';
+      case 'medium':
+        return 'Medium Van';
+      case 'large':
+        return 'Large Van';
+      default:
+        return 'Small Van';
+    }
   };
 
   const handleAcceptJob = () => {
@@ -78,28 +113,31 @@ export default function JobDetailsScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Map View with Image */}
+        {/* Google Map View */}
         <View style={styles.mapContainer}>
-          <Image
-            source={{ uri: 'https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&dpr=2' }}
+          <MapView
             style={styles.mapImage}
-          />
-          
-          {/* Map Overlay with Markers */}
-          <View style={styles.mapOverlay}>
-            <View style={styles.pickupMarker}>
-              <View style={styles.markerContainer}>
-                <MapPin size={20} color="#FFA500" fill="#FFA500" />
-              </View>
-              <Text style={styles.markerText}>Pickup</Text>
-            </View>
-            <View style={styles.dropMarker}>
-              <View style={styles.markerContainer}>
-                <MapPin size={20} color="#6A0DAD" fill="#6A0DAD" />
-              </View>
-              <Text style={styles.markerText}>Drop</Text>
-            </View>
-          </View>
+            initialRegion={{
+              latitude: (pickupCoords.latitude + dropCoords.latitude) / 2,
+              longitude: (pickupCoords.longitude + dropCoords.longitude) / 2,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            }}
+            provider="google"
+          >
+            <Marker
+              coordinate={pickupCoords}
+              title="Pickup Location"
+              description={jobData.pickupAddress}
+              pinColor="#FFA500"
+            />
+            <Marker
+              coordinate={dropCoords}
+              title="Drop Location"
+              description={jobData.dropAddress}
+              pinColor="#6A0DAD"
+            />
+          </MapView>
           
           <TouchableOpacity style={styles.directionsButton} onPress={handleGetDirections}>
             <Navigation size={16} color="#ffffff" />
@@ -114,9 +152,35 @@ export default function JobDetailsScreen() {
               <Text style={[styles.orderNumber, { color: colors.accent }]}>{jobData.orderNumber}</Text>
               <Text style={[styles.paymentAmount, { color: colors.success }]}>{jobData.payment}</Text>
             </View>
-            <View style={[styles.timeContainer, { backgroundColor: colors.surface }]}>
-              <Clock size={16} color={colors.accent} />
-              <Text style={[styles.timeText, { color: colors.accent }]}>{jobData.time}</Text>
+            <View style={styles.dateTimeContainer}>
+              <View style={[styles.dateContainer, { backgroundColor: colors.surface }]}>
+                <Calendar size={14} color={colors.primary} />
+                <Text style={[styles.dateText, { color: colors.primary }]}>{jobData.date}</Text>
+              </View>
+              <View style={[styles.timeContainer, { backgroundColor: colors.surface }]}>
+                <Clock size={14} color={colors.accent} />
+                <Text style={[styles.timeText, { color: colors.accent }]}>{jobData.time}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Van Type Section */}
+          <View style={styles.vanSection}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Vehicle Required</Text>
+            <View style={[styles.vanInfo, { backgroundColor: colors.surface }]}>
+              <Image
+                source={{ uri: getVanImage(jobData.vanType) }}
+                style={styles.vanImage}
+              />
+              <View style={styles.vanDetails}>
+                <Text style={[styles.vanTypeText, { color: colors.text }]}>{getVanTypeLabel(jobData.vanType)}</Text>
+                <View style={styles.vanSpecs}>
+                  <Truck size={14} color={colors.textSecondary} />
+                  <Text style={[styles.vanSpecText, { color: colors.textSecondary }]}>
+                    {jobData.vanType === 'small' ? 'Up to 500kg' : jobData.vanType === 'medium' ? 'Up to 1000kg' : 'Up to 2000kg'}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
 
@@ -142,12 +206,32 @@ export default function JobDetailsScreen() {
             </View>
           </View>
 
-          {/* Goods Information */}
-          <View style={styles.goodsSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Package Details</Text>
-            <View style={[styles.goodsInfo, { backgroundColor: colors.surface }]}>
-              <Package size={20} color={colors.accent} />
-              <Text style={[styles.goodsText, { color: colors.text }]}>{jobData.goods}</Text>
+          {/* Items to Move */}
+          <View style={styles.itemsSection}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Items to Move</Text>
+            <View style={[styles.itemsContainer, { backgroundColor: colors.surface }]}>
+              {jobData.items.split(', ').map((item, index) => (
+                <View key={index} style={[styles.itemChip, { backgroundColor: colors.background, borderColor: colors.border }]}>
+                  <Package size={14} color={colors.accent} />
+                  <Text style={[styles.itemText, { color: colors.text }]}>{item.trim()}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* Helper Information */}
+          <View style={styles.helperSection}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Helper Required</Text>
+            <View style={[styles.helperInfo, { backgroundColor: colors.surface }]}>
+              <Users size={20} color={jobData.helperNeeded ? colors.success : colors.textSecondary} />
+              <Text style={[styles.helperText, { color: colors.text }]}>
+                {jobData.helperNeeded ? 'Helper Required' : 'No Helper Needed'}
+              </Text>
+              {jobData.helperNeeded && (
+                <View style={[styles.helperBadge, { backgroundColor: colors.success }]}>
+                  <Text style={styles.helperBadgeText}>+$15</Text>
+                </View>
+              )}
             </View>
           </View>
 
@@ -264,52 +348,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  mapOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'space-between',
-    padding: 20,
-  },
-  pickupMarker: {
-    position: 'absolute',
-    top: 30,
-    left: 40,
-    alignItems: 'center',
-  },
-  dropMarker: {
-    position: 'absolute',
-    bottom: 40,
-    right: 50,
-    alignItems: 'center',
-  },
-  markerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 8,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  markerText: {
-    color: '#333',
-    fontSize: 12,
-    fontWeight: 'bold',
-    backgroundColor: '#fff',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
-    marginTop: 4,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
   directionsButton: {
     position: 'absolute',
     top: 16,
@@ -359,17 +397,113 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
   },
+  dateTimeContainer: {
+    alignItems: 'flex-end',
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginBottom: 4,
+  },
+  dateText: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
   timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  timeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  vanSection: {
+    marginBottom: 24,
+  },
+  vanInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 12,
+  },
+  vanImage: {
+    width: 80,
+    height: 50,
+    borderRadius: 8,
+    marginRight: 12,
+  },
+  vanDetails: {
+    flex: 1,
+  },
+  vanTypeText: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  vanSpecs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  vanSpecText: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginLeft: 4,
+  },
+  itemsSection: {
+    marginBottom: 24,
+  },
+  itemsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 12,
+    borderRadius: 12,
+    gap: 8,
+  },
+  itemChip: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  itemText: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  helperSection: {
+    marginBottom: 24,
+  },
+  helperInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
     borderRadius: 12,
   },
-  timeText: {
-    fontSize: 14,
+  helperText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 12,
+    flex: 1,
+  },
+  helperBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  helperBadgeText: {
+    color: '#ffffff',
+    fontSize: 12,
     fontWeight: '700',
-    marginLeft: 6,
   },
   customerSection: {
     marginBottom: 24,
@@ -438,20 +572,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-  },
-  goodsSection: {
-    marginBottom: 24,
-  },
-  goodsInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-  },
-  goodsText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 12,
   },
   locationSection: {
     marginBottom: 24,
