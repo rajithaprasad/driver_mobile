@@ -19,13 +19,7 @@
     "plugins": [
       "expo-router", 
       "expo-font", 
-      "expo-web-browser",
-      [
-        "react-native-maps",
-        {
-          "googleMapsApiKey": "AIzaSyB5VFW1YwtOsNLzIpVFAtiYhwu2djvtQLM"
-        }
-      ]
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

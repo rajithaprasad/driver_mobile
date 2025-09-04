@@ -14,7 +14,6 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, MapPin, Clock, User, Phone, Star, Navigation, Package, Truck, Users, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MapView, Marker } from '@/components/MapView';
 import { useTheme } from '@/contexts/ThemeContext';
 
 export default function JobDetailsScreen() {
@@ -113,32 +112,12 @@ export default function JobDetailsScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Google Map View */}
-        <View style={styles.mapContainer}>
-          <MapView
-            style={styles.mapImage}
-            initialRegion={{
-              latitude: (pickupCoords.latitude + dropCoords.latitude) / 2,
-              longitude: (pickupCoords.longitude + dropCoords.longitude) / 2,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05,
-            }}
-            provider="google"
-          >
-            <Marker
-              coordinate={pickupCoords}
-              title="Pickup Location"
-              description={jobData.pickupAddress}
-              pinColor="#FFA500"
-            />
-            <Marker
-              coordinate={dropCoords}
-              title="Drop Location"
-              description={jobData.dropAddress}
-              pinColor="#6A0DAD"
-            />
-          </MapView>
-          
+        {/* Route Image */}
+        <View style={styles.routeContainer}>
+          <Image
+            source={{ uri: 'https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg?auto=compress&cs=tinysrgb&w=800&h=400' }}
+            style={styles.routeImage}
+          />
           <TouchableOpacity style={styles.directionsButton} onPress={handleGetDirections}>
             <Navigation size={16} color="#ffffff" />
             <Text style={[styles.directionsText, { color: '#ffffff' }]}>Get Directions</Text>
@@ -344,7 +323,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
   },
-  mapImage: {
+  routeContainer: {
+    height: 250,
+    margin: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+    position: 'relative',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  routeImage: {
     width: '100%',
     height: '100%',
   },
