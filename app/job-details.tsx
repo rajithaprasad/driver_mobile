@@ -14,7 +14,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, MapPin, Clock, User, Phone, Star, Navigation, Package, Truck, Users, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import MapView, { Marker } from 'react-native-maps';
+import { MapView, Marker } from '@/components/MapView';
 import { useTheme } from '@/contexts/ThemeContext';
 
 export default function JobDetailsScreen() {
