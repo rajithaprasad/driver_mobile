@@ -7,10 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  Alert,
 } from 'react-native';
-import { MapPin, Clock, DollarSign, Package, Star, Navigation, Filter } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { MapPin, Clock, DollarSign, Package, Star, Navigation, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import Header from '@/components/Header';
@@ -32,6 +30,7 @@ const mockJobs = [
     goods: 'Electronics Package',
     notes: 'Handle with care - fragile items inside',
     priority: 'high',
+    date: new Date().toDateString(),
   },
   {
     id: '2',
@@ -47,6 +46,7 @@ const mockJobs = [
     goods: 'Food Delivery',
     notes: 'Ring doorbell twice',
     priority: 'normal',
+    date: new Date().toDateString(),
   },
   {
     id: '3',
@@ -62,39 +62,100 @@ const mockJobs = [
     goods: 'Documents',
     notes: 'Business delivery - ask for signature',
     priority: 'urgent',
+    date: new Date(Date.now() + 86400000).toDateString(), // Tomorrow
+  },
+  {
+    id: '4',
+    orderNumber: 'ORD-2024-004',
+    customer: 'Emily Wilson',
+    customerPhone: '+1 (555) 321-9876',
+    customerRating: 4.6,
+    pickupAddress: '999 Cedar Rd, Northside',
+    dropAddress: '111 Maple Dr, Southside',
+    time: '1:00 PM',
+    distance: '5.5 km',
+    payment: '$28.00',
+    goods: 'Clothing Package',
+    notes: 'Leave at front door if no answer',
+    priority: 'normal',
+    date: new Date(Date.now() - 86400000).toDateString(), // Yesterday
   },
 ];
 
 export default function HomeScreen() {
   const { colors } = useTheme();
   const [jobs] = useState(mockJobs);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentDateIndex, setCurrentDateIndex] = useState(0);
   const [filter, setFilter] = useState<'all' | 'high' | 'urgent'>('all');
 
+  const generateDates = () => {
+    const dates = [];
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30); // Start from 30 days ago
+    
+    for (let i = 0; i <= 60; i++) { // 60 days total
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      dates.push(date);
+    }
+    return dates;
+  };
+
+  const dates = generateDates();
+  const todayIndex = dates.findIndex(date => 
+    date.toDateString() === new Date().toDateString()
+  );
+
+  React.useEffect(() => {
+    setCurrentDateIndex(todayIndex);
+    setSelectedDate(dates[todayIndex]);
+  }, []);
+
+  const formatDate = (date: Date) => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return {
+      day: days[date.getDay()],
+      date: date.getDate(),
+      month: months[date.getMonth()],
+      year: date.getFullYear(),
+    };
+  };
+
+  const navigateDate = (direction: 'prev' | 'next') => {
+    const newIndex = direction === 'prev' 
+      ? Math.max(0, currentDateIndex - 1)
+      : Math.min(dates.length - 1, currentDateIndex + 1);
+    
+    setCurrentDateIndex(newIndex);
+    setSelectedDate(dates[newIndex]);
+  };
+
+  // Filter jobs by selected date and priority
+  const jobsForDate = jobs.filter(job => job.date === selectedDate.toDateString());
   const filteredJobs = filter === 'all' 
-    ? jobs 
-    : jobs.filter(job => job.priority === filter);
+    ? jobsForDate 
+    : jobsForDate.filter(job => job.priority === filter);
 
   const handleViewJob = (job: any) => {
     router.push({
       pathname: '/job-details',
-      params: job,
+      params: {
+        id: job.id,
+        orderNumber: job.orderNumber,
+        customer: job.customer,
+        customerPhone: job.customerPhone,
+        customerRating: job.customerRating.toString(),
+        pickupAddress: job.pickupAddress,
+        dropAddress: job.dropAddress,
+        time: job.time,
+        distance: job.distance,
+        payment: job.payment,
+        goods: job.goods,
+        notes: job.notes,
+      },
     });
-  };
-
-  const handleQuickAccept = (jobId: string) => {
-    Alert.alert(
-      'Accept Job',
-      'Are you sure you want to accept this delivery job?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Accept', 
-          onPress: () => {
-            Alert.alert('Success', 'Job accepted! Check your schedule for details.');
-          }
-        }
-      ]
-    );
   };
 
   const getPriorityColor = (priority: string) => {
@@ -145,6 +206,40 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* Date Scroller */}
+        <View style={styles.dateSection}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Select Date</Text>
+          
+          <View style={[styles.dateScrollerContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.dateNavigationContainer}>
+              <TouchableOpacity 
+                style={[styles.dateNavButton, { backgroundColor: colors.surface }]} 
+                onPress={() => navigateDate('prev')}
+                disabled={currentDateIndex === 0}
+              >
+                <ChevronLeft size={20} color={currentDateIndex === 0 ? colors.border : colors.primary} />
+              </TouchableOpacity>
+              
+              <View style={[styles.currentDateContainer, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.currentDateText, { color: colors.text }]}>
+                  {formatDate(selectedDate).month} {formatDate(selectedDate).date}, {formatDate(selectedDate).year}
+                </Text>
+                <Text style={[styles.currentDayText, { color: colors.primary }]}>
+                  {formatDate(selectedDate).day}
+                </Text>
+              </View>
+              
+              <TouchableOpacity 
+                style={[styles.dateNavButton, { backgroundColor: colors.surface }]} 
+                onPress={() => navigateDate('next')}
+                disabled={currentDateIndex === dates.length - 1}
+              >
+                <ChevronRight size={20} color={currentDateIndex === dates.length - 1 ? colors.border : colors.primary} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
         {/* Filter Buttons */}
         <View style={styles.filterContainer}>
           <Text style={[styles.filterTitle, { color: colors.text }]}>Filter Jobs</Text>
@@ -175,83 +270,74 @@ export default function HomeScreen() {
         {/* Jobs List */}
         <View style={styles.jobsContainer}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            {filteredJobs.length} Jobs Available
+            {filteredJobs.length} Jobs Available for {formatDate(selectedDate).month} {formatDate(selectedDate).date}
           </Text>
           
-          {filteredJobs.map((job) => (
-            <View key={job.id} style={[styles.jobCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              {/* Priority Badge */}
-              <View style={[styles.priorityBadge, { backgroundColor: getPriorityColor(job.priority) }]}>
-                <Text style={styles.priorityText}>{getPriorityLabel(job.priority)}</Text>
-              </View>
+          {filteredJobs.length === 0 ? (
+            <View style={[styles.emptyJobs, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Package size={40} color={colors.border} />
+              <Text style={[styles.emptyJobsText, { color: colors.textSecondary }]}>No jobs available for this date</Text>
+            </View>
+          ) : (
+            filteredJobs.map((job) => (
+              <View key={job.id} style={[styles.jobCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                {/* Priority Badge */}
+                <View style={[styles.priorityBadge, { backgroundColor: getPriorityColor(job.priority) }]}>
+                  <Text style={styles.priorityText}>{getPriorityLabel(job.priority)}</Text>
+                </View>
 
-              {/* Job Header */}
-              <View style={styles.jobHeader}>
-                <View style={styles.jobLeft}>
-                  <Text style={[styles.orderNumber, { color: colors.accent }]}>{job.orderNumber}</Text>
-                  <Text style={[styles.customerName, { color: colors.text }]}>{job.customer}</Text>
-                  <View style={styles.ratingContainer}>
-                    <Star size={12} color={colors.accent} fill={colors.accent} />
-                    <Text style={[styles.ratingText, { color: colors.accent }]}>{job.customerRating}</Text>
+                {/* Job Header */}
+                <View style={styles.jobHeader}>
+                  <View style={styles.jobLeft}>
+                    <Text style={[styles.orderNumber, { color: colors.accent }]}>{job.orderNumber}</Text>
+                    <Text style={[styles.customerName, { color: colors.text }]}>{job.customer}</Text>
+                    <View style={styles.ratingContainer}>
+                      <Star size={12} color={colors.accent} fill={colors.accent} />
+                      <Text style={[styles.ratingText, { color: colors.accent }]}>{job.customerRating}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.jobRight}>
+                    <Text style={[styles.paymentAmount, { color: colors.success }]}>{job.payment}</Text>
+                    <View style={[styles.timeContainer, { backgroundColor: colors.surface }]}>
+                      <Clock size={12} color={colors.accent} />
+                      <Text style={[styles.timeText, { color: colors.accent }]}>{job.time}</Text>
+                    </View>
                   </View>
                 </View>
-                <View style={styles.jobRight}>
-                  <Text style={[styles.paymentAmount, { color: colors.success }]}>{job.payment}</Text>
-                  <View style={[styles.timeContainer, { backgroundColor: colors.surface }]}>
-                    <Clock size={12} color={colors.accent} />
-                    <Text style={[styles.timeText, { color: colors.accent }]}>{job.time}</Text>
+
+                {/* Locations */}
+                <View style={styles.locationsContainer}>
+                  <View style={styles.locationItem}>
+                    <View style={[styles.locationDot, { backgroundColor: colors.accent }]} />
+                    <Text style={[styles.locationText, { color: colors.text }]}>{job.pickupAddress}</Text>
+                  </View>
+                  <View style={[styles.routeLine, { backgroundColor: colors.border }]} />
+                  <View style={styles.locationItem}>
+                    <View style={[styles.locationDot, { backgroundColor: colors.primary }]} />
+                    <Text style={[styles.locationText, { color: colors.text }]}>{job.dropAddress}</Text>
                   </View>
                 </View>
-              </View>
 
-              {/* Locations */}
-              <View style={styles.locationsContainer}>
-                <View style={styles.locationItem}>
-                  <View style={[styles.locationDot, { backgroundColor: colors.accent }]} />
-                  <Text style={[styles.locationText, { color: colors.text }]}>{job.pickupAddress}</Text>
+                {/* Package Info */}
+                <View style={[styles.packageInfo, { backgroundColor: colors.surface }]}>
+                  <Package size={16} color={colors.textSecondary} />
+                  <Text style={[styles.packageText, { color: colors.text }]}>{job.goods}</Text>
+                  <View style={styles.distanceContainer}>
+                    <Navigation size={12} color={colors.textSecondary} />
+                    <Text style={[styles.distanceText, { color: colors.textSecondary }]}>{job.distance}</Text>
+                  </View>
                 </View>
-                <View style={[styles.routeLine, { backgroundColor: colors.border }]} />
-                <View style={styles.locationItem}>
-                  <View style={[styles.locationDot, { backgroundColor: colors.primary }]} />
-                  <Text style={[styles.locationText, { color: colors.text }]}>{job.dropAddress}</Text>
-                </View>
-              </View>
 
-              {/* Package Info */}
-              <View style={[styles.packageInfo, { backgroundColor: colors.surface }]}>
-                <Package size={16} color={colors.textSecondary} />
-                <Text style={[styles.packageText, { color: colors.text }]}>{job.goods}</Text>
-                <View style={styles.distanceContainer}>
-                  <Navigation size={12} color={colors.textSecondary} />
-                  <Text style={[styles.distanceText, { color: colors.textSecondary }]}>{job.distance}</Text>
-                </View>
-              </View>
-
-              {/* Action Buttons */}
-              <View style={styles.actionButtons}>
+                {/* Action Button */}
                 <TouchableOpacity 
-                  style={[styles.viewButton, { backgroundColor: colors.surface, borderColor: colors.primary }]}
+                  style={[styles.viewButton, { backgroundColor: colors.primary }]}
                   onPress={() => handleViewJob(job)}
                 >
-                  <Text style={[styles.viewButtonText, { color: colors.primary }]}>View Details</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity 
-                  style={styles.acceptButton}
-                  onPress={() => handleQuickAccept(job.id)}
-                >
-                  <LinearGradient
-                    colors={['#f59e0b', '#d97706']}
-                    style={styles.acceptButtonGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                  >
-                    <Text style={styles.acceptButtonText}>Quick Accept</Text>
-                  </LinearGradient>
+                  <Text style={[styles.viewButtonText, { color: '#ffffff' }]}>View Details</Text>
                 </TouchableOpacity>
               </View>
-            </View>
-          ))}
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -292,6 +378,45 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
+  dateSection: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  dateScrollerContainer: {
+    borderRadius: 12,
+    padding: 16,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderWidth: 1,
+  },
+  dateNavigationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dateNavButton: {
+    padding: 8,
+    borderRadius: 8,
+    marginHorizontal: 20,
+  },
+  currentDateContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    minWidth: 180,
+  },
+  currentDateText: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  currentDayText: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 2,
+  },
   filterContainer: {
     paddingHorizontal: 20,
     marginBottom: 20,
@@ -323,6 +448,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 16,
+  },
+  emptyJobs: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  emptyJobsText: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 8,
   },
   jobCard: {
     borderRadius: 16,
@@ -443,37 +580,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 4,
   },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
   viewButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: 'center',
-    borderWidth: 1,
-  },
-  viewButtonText: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  acceptButton: {
-    flex: 1,
-    borderRadius: 8,
-    overflow: 'hidden',
     elevation: 2,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  acceptButtonGradient: {
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  acceptButtonText: {
-    color: '#ffffff',
-    fontSize: 14,
+  viewButtonText: {
+    fontSize: 16,
     fontWeight: '700',
   },
 });
