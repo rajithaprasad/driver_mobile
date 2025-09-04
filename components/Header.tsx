@@ -7,7 +7,7 @@ import {
   Modal,
   Pressable,
 } from 'react-native';
-import { Bell, Menu, Moon, Sun, Settings, FileText, Shield, HelpCircle, LogOut, X } from 'lucide-react-native';
+import { Bell, Menu, Moon, Sun, Settings, FileText, Shield, CircleHelp as HelpCircle, LogOut, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
