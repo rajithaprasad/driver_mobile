@@ -157,23 +157,6 @@ export default function HomeScreen() {
     setShowDatePicker(true);
   };
 
-  const handleDatePickerChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      const newIndex = dates.findIndex(date => 
-        date.toDateString() === selectedDate.toDateString()
-      );
-      if (newIndex !== -1) {
-        setCurrentDateIndex(newIndex);
-        setSelectedDate(selectedDate);
-      }
-    }
-  };
-
-  const openCalendar = () => {
-    setShowDatePicker(true);
-  };
-
   // Filter jobs by selected date and tab
   const jobsForDate = jobs.filter(job => job.date === selectedDate.toDateString());
   const filteredJobs = jobsForDate.filter(job => {
